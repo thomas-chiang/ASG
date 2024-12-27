@@ -1,5 +1,5 @@
 using ASG.Application.ApolloSyncActions.Commands.CreateApolloSyncAction;
-using ASG.Contracts.ApolloSyncAction;
+using ASG.Contracts.ApolloSyncActions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

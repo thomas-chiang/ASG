@@ -1,3 +1,3 @@
-namespace ASG.Contracts.ApolloSyncAction;
+namespace ASG.Contracts.ApolloSyncActions;
 
 public record ApolloSyncActionResponse(int CountOfAnonymousRequests);

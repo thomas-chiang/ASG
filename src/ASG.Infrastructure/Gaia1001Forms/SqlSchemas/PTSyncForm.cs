@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ASG.Infrastructure.Gaia1001Forms.SqlSchemas;
 
-[Table("PTSyncForm_Archive_2024", Schema = "gbpm")]
+[Table("PTSyncForm", Schema = "gbpm")]
 public class PTSyncForm
 {
     [Key]

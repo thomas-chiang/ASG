@@ -1,5 +1,5 @@
 using ASG.Application.Gaia1001Forms.Queries.GetGaia1001Form;
-using ASG.Contracts.Gaia1001Form;
+using ASG.Contracts.Gaia1001Forms;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,18 +17,33 @@ public class Gaia1001FormController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{formKindPlusFormNo}")]
-    public async Task<IActionResult> GetGaia1001Form(string formKindPlusFormNo)
+    [HttpGet]
+    public async Task<IActionResult> GetGaia1001Form([FromQuery] GetGaia1001FormRequest request)
     {
 
-        var command = new GetGaia1001FormQuery(formKindPlusFormNo);
+        var query = new GetGaia1001FormQuery (request.FormKind, request.FormNo);
 
-        var getGaia1001FormResult = await _mediator.Send(command);
-        
-        // return Ok(formKindPlusFormNo);
+        var getGaia1001FormResult = await _mediator.Send(query);
         
         return getGaia1001FormResult.MatchFirst(
-            gaia1001Form => Ok(new Gaia1001FormResponse(gaia1001Form.FormStatus.ToString())),
+            gaia1001Form => Ok(new Gaia1001FormResponse{
+                FormKind = gaia1001Form.FormKind,               
+                FormNo = gaia1001Form.FormNo,                 
+                CompanyId = gaia1001Form.CompanyId,              
+                UserEmployeeId = gaia1001Form.UserEmployeeId,         
+                PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation => new PTSyncFormOperation
+                {
+                    FormContent = operation.FormContent,
+                    FormAction = operation.FormAction,
+                    CreatedOn = operation.CreatedOn,
+                    ModifiedOn = operation.ModifiedOn,
+                    Flag = operation.Flag,
+                    RetryCount = operation.RetryCount,
+                }).ToList() ?? new List<PTSyncFormOperation>(),  
+                FormStatus = gaia1001Form.FormStatus.ToString(),
+                AttendanceOn = gaia1001Form.AttendanceOn,
+                AttendanceType = gaia1001Form.AttendanceType.ToString()
+            }),
             error => Problem()
         );
     }
