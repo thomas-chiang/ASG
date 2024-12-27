@@ -1,0 +1,10 @@
+#@host=http://localhost:5209
+#@afterModifiedOn=2024/12/10 10:02
+#
+#GET {{host}}/FailedSyncs/?afterModifiedOn={{afterModifiedOn}}
+
+###
+@baseUrl = http://localhost:5212
+@modifiedDate = 2024-12-10T10:02:00Z
+#GET {{baseUrl}}/GaiaFormFlow/?afterModifiedOn={{modifiedDate}}
+GET {{baseUrl}}/Gaia1001Form/WVT9.FORM.1001Plus48585

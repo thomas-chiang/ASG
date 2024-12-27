@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:5212
+###
+POST {{baseUrl}}/ApolloSyncAction
+Content-Type: application/json
+
+{
+    "FormKindPlusFormNo":"WVT9.FORM.1001Plus48585"
+}
+
+###
