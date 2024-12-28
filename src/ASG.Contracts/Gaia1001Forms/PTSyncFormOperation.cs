@@ -1,16 +1,15 @@
 namespace ASG.Contracts.Gaia1001Forms;
 
-public record PTSyncFormOperation
+public record PtSyncFormOperation
 {
-    public string FormContent { get; init; }
-
-    public byte FormAction { get; init; }
+    public string FormContent { get; init; } = null!;
+    public string FormAction { get; init; }
 
     public DateTime CreatedOn { get; init; }
 
     public DateTime? ModifiedOn { get; init; }
 
-    public byte Flag { get; init; }
+    public string Flag { get; init; } = null!;
 
     public byte? RetryCount { get; init; }
 }

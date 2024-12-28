@@ -4,8 +4,8 @@ using ASG.Domain.Gaia1001Forms;
 
 namespace ASG.Infrastructure.Gaia1001Forms.SqlSchemas;
 
-[Table("PTSyncForm", Schema = "gbpm")]
-public class PtSyncForm
+[Table("PTSyncForm_Archive_2025", Schema = "gbpm")]
+public class PtSyncFormArchive2025
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,11 +15,13 @@ public class PtSyncForm
 
     public Guid UserEmployeeId { get; set; }
 
-    [MaxLength(100)] public string FormKind { get; set; }
+    [MaxLength(100)]
+    public string FormKind { get; set; }
 
     public int FormNo { get; set; }
 
-    [Column(TypeName = "nvarchar(max)")] public string FormContent { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string FormContent { get; set; }
 
     public byte FormAction { get; set; }
 
@@ -30,18 +32,18 @@ public class PtSyncForm
     public byte Flag { get; set; }
 
     public byte? RetryCount { get; set; }
-
+    
     public FormAction GetFormActionEnum()
     {
         return FormAction switch
         {
-            1 => Domain.Gaia1001Forms.FormAction.Apply,
-            2 => Domain.Gaia1001Forms.FormAction.Approve,
-            3 => Domain.Gaia1001Forms.FormAction.Recalled,
+            1 => ASG.Domain.Gaia1001Forms.FormAction.Apply,
+            2 => ASG.Domain.Gaia1001Forms.FormAction.Approve,
+            3 => ASG.Domain.Gaia1001Forms.FormAction.Recalled,
             _ => throw new InvalidOperationException($"Invalid FormAction value: {FormAction}")
         };
     }
-
+    
     public Flag GetFlagEnum()
     {
         return Flag switch

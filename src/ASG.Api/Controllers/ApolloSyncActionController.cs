@@ -29,7 +29,7 @@ public class ApolloSyncActionController : Controller
         // return Ok(response);
         
         return createApolloSyncActionResult.MatchFirst(
-            apolloSyncAction => Ok(new ApolloSyncActionResponse(apolloSyncAction.anonymousRequests.Count)),
+            apolloSyncAction => Ok(new ApolloSyncActionResponse(apolloSyncAction.AnonymousRequests.Count)),
             error => Problem()
         );
     }

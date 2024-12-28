@@ -17,7 +17,7 @@ public record Gaia1001FormResponse
     public int FormNo { get; init; }
     public Guid CompanyId { get; init; }
     public Guid UserEmployeeId { get; init; }
-    public List<PTSyncFormOperation> PtSyncFormOperations { get; init; }
+    public List<PtSyncFormOperation> PtSyncFormOperations { get; init; }
     public string FormStatus { get; init; }
     public DateTime AttendanceOn { get; init; }
     public string AttendanceType { get; init; }

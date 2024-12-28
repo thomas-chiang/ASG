@@ -19,7 +19,7 @@ public class CreateApolloSyncActionCommandHandler :　IRequestHandler<CreateApol
     {
         var apolloSyncAction = new ApolloSyncAction
         {
-            anonymousRequests = new List<AnonymousRequest>()
+            AnonymousRequests = new List<AnonymousRequest>()
         };
         
         await _apolloSyncActionRepository.AddApolloSyncActionAsync(apolloSyncAction);

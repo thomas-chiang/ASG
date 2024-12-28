@@ -10,80 +10,117 @@ namespace ASG.Infrastructure.Gaia1001Forms.Persistence;
 
 public class Gaia1001FormRepository : IGaia1001FormRepository
 {
-    
-    public readonly SqlDbContext _dbContext;
+    public readonly SqlDbContext DbContext;
 
     public Gaia1001FormRepository(SqlDbContext dbContext)
     {
-        _dbContext = dbContext;
+        DbContext = dbContext;
     }
 
     public async Task<Gaia1001Form?> GetGaia1001Form(string formKind, int formNo)
     {
-        var pTSyncForms =  await _dbContext.PTSyncForms
+        var pTSyncForms = await DbContext.PtSyncForms
             .Where(form => form.FormKind == formKind && form.FormNo == formNo)
             .ToListAsync();
-        
-        var attendanceInfo= await GetAttendanceInfo(
-            formKind, 
+
+        var attendanceInfo = await GetAttendanceInfo(
+            formKind,
             formNo,
             "gbpm." + formKind.Replace(".", "")
         );
-        
-        return new Gaia1001Form
+
+        var gaia1001Form = new Gaia1001Form
         {
             FormKind = formKind,
             FormNo = formNo,
             CompanyId = pTSyncForms.First().CompanyId,
             UserEmployeeId = pTSyncForms.First().UserEmployeeId,
-            PtSyncFormOperations = SetPtSyncFormOperations(pTSyncForms),
+            PtSyncFormOperations = GetPtSyncFormOperations(pTSyncForms),
             AttendanceOn = attendanceInfo.AttendanceOn,
             FormStatus = attendanceInfo.GetFormStatusEnum(),
             AttendanceType = attendanceInfo.GetAttendanceTypeEnum(),
         };
-    }
-    
-    private List<PTSyncFormOperation> SetPtSyncFormOperations(List<PTSyncForm> pTSyncForms)
-    {
-        var ptSyncFormOperations = new List<PTSyncFormOperation>();
 
-        foreach (var form in pTSyncForms)
+        if (gaia1001Form.AttendanceOn.Year <= 2024)
         {
-            var operation = new PTSyncFormOperation
-            {
-                FormContent = form.FormContent,
-                FormAction = form.FormAction,
-                CreatedOn = form.CreatedOn,
-                ModifiedOn = form.ModifiedOn,
-                Flag = form.Flag,
-                RetryCount = form.RetryCount
-            };
-
-            ptSyncFormOperations.Add(operation);
+            gaia1001Form.PtSyncFormOperations.AddRange(await Get2024ArchivedPtSyncFormOperations(formKind, formNo));
+        }
+        else
+        {
+            gaia1001Form.PtSyncFormOperations.AddRange(await Get2024ArchivedPtSyncFormOperations(formKind, formNo));
         }
 
-        return ptSyncFormOperations;
+        gaia1001Form.PtSyncFormOperations = gaia1001Form.PtSyncFormOperations
+            .OrderBy(op => op.CreatedOn)
+            .ToList();
+
+        return gaia1001Form;
     }
-    
+
+    public async Task<List<PtSyncFormOperation>> Get2024ArchivedPtSyncFormOperations(string formKind, int formNo)
+    {
+        return await DbContext.PtSyncFormsArchive2024
+            .Where(form => form.FormKind == formKind && form.FormNo == formNo)
+            .Select(form => new PtSyncFormOperation
+            {
+                FormContent = form.FormContent,
+                FormAction = form.GetFormActionEnum(),
+                CreatedOn = form.CreatedOn,
+                ModifiedOn = form.ModifiedOn,
+                Flag = form.GetFlagEnum(),
+                RetryCount = form.RetryCount
+            }).ToListAsync();
+    }
+
+    public async Task<List<PtSyncFormOperation>> Get2025ArchivedPtSyncFormOperations(string formKind, int formNo)
+    {
+        return await DbContext.PtSyncFormsArchive2025
+            .Where(form => form.FormKind == formKind && form.FormNo == formNo)
+            .Select(form => new PtSyncFormOperation
+            {
+                FormContent = form.FormContent,
+                FormAction = form.GetFormActionEnum(),
+                CreatedOn = form.CreatedOn,
+                ModifiedOn = form.ModifiedOn,
+                Flag = form.GetFlagEnum(),
+                RetryCount = form.RetryCount
+            }).ToListAsync();
+    }
+
+    private List<PtSyncFormOperation> GetPtSyncFormOperations(List<PtSyncForm> pTSyncForms)
+    {
+        return pTSyncForms.Select(form => new PtSyncFormOperation
+        {
+            FormContent = form.FormContent,
+            FormAction = form.GetFormActionEnum(),
+            CreatedOn = form.CreatedOn,
+            ModifiedOn = form.ModifiedOn,
+            Flag = form.GetFlagEnum(),
+            RetryCount = form.RetryCount
+        }).ToList();
+    }
+
     private async Task<Gaia1001Attendance> GetAttendanceInfo(string formKind, int formNo, string tableName)
     {
         string attendanceQuery = $@"
             SELECT
-                h.form_status,
+                h.form_status as FormStatus,
                 f.ATTENDANCETYPE AS AttendanceType,
                 CAST(CONVERT(DATETIMEOFFSET, (CONVERT(NVARCHAR, f.[DATETIME], 126) + f.TIMEZONE)) AT TIME ZONE 'UTC' AS DATETIME) AS AttendanceOn
             FROM {tableName} f
             JOIN gbpm.fm_form_header h ON f.form_no = h.form_no
             WHERE h.form_kind = @formKind AND h.form_no = @formNo";
 
-        var gaia1001Attendance = await _dbContext.Set<Gaia1001Attendance>()
-            .FromSqlRaw(attendanceQuery, 
+        var gaia1001Attendance = await DbContext.Set<Gaia1001Attendance>()
+            .FromSqlRaw(attendanceQuery,
                 new SqlParameter("@formKind", formKind),
                 new SqlParameter("@formNo", formNo))
-            .FirstOrDefaultAsync(); 
-        
+            .FirstOrDefaultAsync();
 
-        return gaia1001Attendance ?? throw new InvalidOperationException($"No attendance information found for formKind: {formKind} and formNo: {formNo}.");
+
+        return gaia1001Attendance ??
+               throw new InvalidOperationException(
+                   $"No attendance information found for formKind: {formKind} and formNo: {formNo}.");
         ;
     }
 }

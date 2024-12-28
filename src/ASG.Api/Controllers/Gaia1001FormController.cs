@@ -31,15 +31,15 @@ public class Gaia1001FormController : ControllerBase
                 FormNo = gaia1001Form.FormNo,                 
                 CompanyId = gaia1001Form.CompanyId,              
                 UserEmployeeId = gaia1001Form.UserEmployeeId,         
-                PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation => new PTSyncFormOperation
+                PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation => new PtSyncFormOperation
                 {
                     FormContent = operation.FormContent,
-                    FormAction = operation.FormAction,
+                    FormAction = operation.FormAction.ToString(),
                     CreatedOn = operation.CreatedOn,
                     ModifiedOn = operation.ModifiedOn,
-                    Flag = operation.Flag,
+                    Flag = operation.Flag.ToString(),
                     RetryCount = operation.RetryCount,
-                }).ToList() ?? new List<PTSyncFormOperation>(),  
+                }).ToList() ?? new List<PtSyncFormOperation>(),  
                 FormStatus = gaia1001Form.FormStatus.ToString(),
                 AttendanceOn = gaia1001Form.AttendanceOn,
                 AttendanceType = gaia1001Form.AttendanceType.ToString()

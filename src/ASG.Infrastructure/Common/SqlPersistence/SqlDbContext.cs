@@ -7,7 +7,11 @@ namespace ASG.Infrastructure.Common.SqlPersistence;
 
 public class SqlDbContext: DbContext
 {
-    public DbSet<PTSyncForm> PTSyncForms { get; set; } = null!;
+    public DbSet<PtSyncForm> PtSyncForms { get; set; } = null!;
+    
+    public DbSet<PtSyncFormArchive2024> PtSyncFormsArchive2024 { get; set; } = null!;
+    
+    public DbSet<PtSyncFormArchive2025> PtSyncFormsArchive2025 { get; set; } = null!;
     
     public DbSet<Gaia1001Attendance> Gaia1001Attendances { get; set; }
     
