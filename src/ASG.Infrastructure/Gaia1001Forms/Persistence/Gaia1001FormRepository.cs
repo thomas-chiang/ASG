@@ -1,7 +1,7 @@
 using ASG.Application.Gaia1001Forms.Interfaces;
 using ASG.Domain.Gaia1001Forms;
-using ASG.Infrastructure.Common.SqlPersistence;
-using ASG.Infrastructure.Gaia1001Forms.SqlSchemas;
+using ASG.Infrastructure.Common.SqlServerDbContexts;
+using ASG.Infrastructure.Gaia1001Forms.AisaFlowDbSchemas;
 using ASG.Infrastructure.Gaia1001Forms.Views;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,16 +10,16 @@ namespace ASG.Infrastructure.Gaia1001Forms.Persistence;
 
 public class Gaia1001FormRepository : IGaia1001FormRepository
 {
-    public readonly SqlDbContext DbContext;
+    private readonly AsiaFlowDbContext _dbContext;
 
-    public Gaia1001FormRepository(SqlDbContext dbContext)
+    public Gaia1001FormRepository(AsiaFlowDbContext dbContext)
     {
-        DbContext = dbContext;
+        _dbContext = dbContext;
     }
 
     public async Task<Gaia1001Form?> GetGaia1001Form(string formKind, int formNo)
     {
-        var pTSyncForms = await DbContext.PtSyncForms
+        var pTSyncForms = await _dbContext.PtSyncForms
             .Where(form => form.FormKind == formKind && form.FormNo == formNo)
             .ToListAsync();
 
@@ -38,17 +38,13 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
             PtSyncFormOperations = GetPtSyncFormOperations(pTSyncForms),
             AttendanceOn = attendanceInfo.AttendanceOn,
             FormStatus = attendanceInfo.GetFormStatusEnum(),
-            AttendanceType = attendanceInfo.GetAttendanceTypeEnum(),
+            AttendanceType = attendanceInfo.GetAttendanceTypeEnum()
         };
 
         if (gaia1001Form.AttendanceOn.Year <= 2024)
-        {
             gaia1001Form.PtSyncFormOperations.AddRange(await Get2024ArchivedPtSyncFormOperations(formKind, formNo));
-        }
         else
-        {
             gaia1001Form.PtSyncFormOperations.AddRange(await Get2024ArchivedPtSyncFormOperations(formKind, formNo));
-        }
 
         gaia1001Form.PtSyncFormOperations = gaia1001Form.PtSyncFormOperations
             .OrderBy(op => op.CreatedOn)
@@ -59,7 +55,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
 
     public async Task<List<PtSyncFormOperation>> Get2024ArchivedPtSyncFormOperations(string formKind, int formNo)
     {
-        return await DbContext.PtSyncFormsArchive2024
+        return await _dbContext.PtSyncFormsArchive2024
             .Where(form => form.FormKind == formKind && form.FormNo == formNo)
             .Select(form => new PtSyncFormOperation
             {
@@ -74,7 +70,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
 
     public async Task<List<PtSyncFormOperation>> Get2025ArchivedPtSyncFormOperations(string formKind, int formNo)
     {
-        return await DbContext.PtSyncFormsArchive2025
+        return await _dbContext.PtSyncFormsArchive2025
             .Where(form => form.FormKind == formKind && form.FormNo == formNo)
             .Select(form => new PtSyncFormOperation
             {
@@ -102,16 +98,16 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
 
     private async Task<Gaia1001Attendance> GetAttendanceInfo(string formKind, int formNo, string tableName)
     {
-        string attendanceQuery = $@"
+        var attendanceQuery = $@"
             SELECT
                 h.form_status as FormStatus,
                 f.ATTENDANCETYPE AS AttendanceType,
-                CAST(CONVERT(DATETIMEOFFSET, (CONVERT(NVARCHAR, f.[DATETIME], 126) + f.TIMEZONE)) AT TIME ZONE 'UTC' AS DATETIME) AS AttendanceOn
+                DATEADD(HOUR, 8, CAST(CONVERT(DATETIMEOFFSET, (CONVERT(NVARCHAR, f.[DATETIME], 126) + f.TIMEZONE)) AT TIME ZONE 'UTC' AS DATETIME)) AS AttendanceOn
             FROM {tableName} f
             JOIN gbpm.fm_form_header h ON f.form_no = h.form_no
             WHERE h.form_kind = @formKind AND h.form_no = @formNo";
 
-        var gaia1001Attendance = await DbContext.Set<Gaia1001Attendance>()
+        var gaia1001Attendance = await _dbContext.Set<Gaia1001Attendance>()
             .FromSqlRaw(attendanceQuery,
                 new SqlParameter("@formKind", formKind),
                 new SqlParameter("@formNo", formNo))

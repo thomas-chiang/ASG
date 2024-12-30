@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ASG.Domain.Gaia1001Forms;
 
-namespace ASG.Infrastructure.Gaia1001Forms.SqlSchemas;
+namespace ASG.Infrastructure.Gaia1001Forms.AisaFlowDbSchemas;
 
 [Table("PTSyncForm", Schema = "gbpm")]
 public class PtSyncForm

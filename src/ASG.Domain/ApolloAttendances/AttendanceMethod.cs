@@ -1,4 +1,4 @@
-namespace ASG.Domain.ApolleAttendanceHistories;
+namespace ASG.Domain.ApolloAttendances;
 
 public enum AttendanceMethod
 {

@@ -4,6 +4,7 @@ namespace ASG.Domain.Gaia1001Forms;
 
 public class Gaia1001Form
 {
+    // TODO: create class FormKind
     public required string FormKind { get; set; }
 
     public required int FormNo { get; set; }

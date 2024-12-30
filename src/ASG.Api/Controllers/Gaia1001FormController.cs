@@ -18,6 +18,9 @@ public class Gaia1001FormController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(GetGaia1001FormResponse), 200)]
+    [ProducesResponseType(500)]
+    [Produces("application/json")]
     public async Task<IActionResult> GetGaia1001Form([FromQuery] GetGaia1001FormRequest request)
     {
 
@@ -26,12 +29,12 @@ public class Gaia1001FormController : ControllerBase
         var getGaia1001FormResult = await _mediator.Send(query);
         
         return getGaia1001FormResult.MatchFirst(
-            gaia1001Form => Ok(new Gaia1001FormResponse{
+            gaia1001Form => Ok(new GetGaia1001FormResponse{
                 FormKind = gaia1001Form.FormKind,               
                 FormNo = gaia1001Form.FormNo,                 
                 CompanyId = gaia1001Form.CompanyId,              
                 UserEmployeeId = gaia1001Form.UserEmployeeId,         
-                PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation => new PtSyncFormOperation
+                PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation => new PTSyncFormOperationResponse
                 {
                     FormContent = operation.FormContent,
                     FormAction = operation.FormAction.ToString(),
@@ -39,7 +42,7 @@ public class Gaia1001FormController : ControllerBase
                     ModifiedOn = operation.ModifiedOn,
                     Flag = operation.Flag.ToString(),
                     RetryCount = operation.RetryCount,
-                }).ToList() ?? new List<PtSyncFormOperation>(),  
+                }).ToList() ?? new List<PTSyncFormOperationResponse>(),  
                 FormStatus = gaia1001Form.FormStatus.ToString(),
                 AttendanceOn = gaia1001Form.AttendanceOn,
                 AttendanceType = gaia1001Form.AttendanceType.ToString()

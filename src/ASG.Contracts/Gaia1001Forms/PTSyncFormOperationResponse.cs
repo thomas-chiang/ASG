@@ -1,6 +1,6 @@
 namespace ASG.Contracts.Gaia1001Forms;
 
-public record PtSyncFormOperation
+public record PTSyncFormOperationResponse
 {
     public string FormContent { get; init; } = null!;
     public string FormAction { get; init; }

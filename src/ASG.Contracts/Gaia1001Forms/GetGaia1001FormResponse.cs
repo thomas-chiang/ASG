@@ -1,6 +1,6 @@
 namespace ASG.Contracts.Gaia1001Forms;
 
-// public record class Gaia1001FormResponse(
+// public record class GetGaia1001FormResponse(
 //     string FormKind,
 //     int FormNo,
 //     Guid CompanyId,
@@ -11,13 +11,13 @@ namespace ASG.Contracts.Gaia1001Forms;
 //     string AttendanceType
 // );
 
-public record Gaia1001FormResponse
+public record GetGaia1001FormResponse
 {
     public string FormKind { get; init; }
     public int FormNo { get; init; }
     public Guid CompanyId { get; init; }
     public Guid UserEmployeeId { get; init; }
-    public List<PtSyncFormOperation> PtSyncFormOperations { get; init; }
+    public List<PTSyncFormOperationResponse> PtSyncFormOperations { get; init; }
     public string FormStatus { get; init; }
     public DateTime AttendanceOn { get; init; }
     public string AttendanceType { get; init; }
