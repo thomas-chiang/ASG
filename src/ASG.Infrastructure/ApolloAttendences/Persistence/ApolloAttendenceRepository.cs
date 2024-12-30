@@ -27,17 +27,19 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
         
         using (var context = new DynamicDbContext(connectionString))
         {
-            // Perform database operations
             var attendanceHistories = await context.AttendanceHistories
                 .Where(history => history.CompanyId == companyId 
                                   && history.EmployeeId == userEmployeeId 
                                   && history.iAttendanceType == AttendanceHistory.GetAttendanceTypeValue(attendanceType) 
                                   && history.AttendanceDate.Date == attendanceDate.ToDateTime(new TimeOnly(0, 0)).Date)
                 .ToListAsync();
-            foreach (var history in attendanceHistories)
-            {
-                Console.WriteLine($"LocationName: {history.LocationName}");
-            }
+           
+            var attendanceHistoryRecords = await context.AttendanceHistoryRecords
+                .Where(record => record.CompanyId == companyId 
+                                 && record.EmployeeId == userEmployeeId 
+                                 && record.iAttendanceType == AttendanceHistory.GetAttendanceTypeValue(attendanceType) 
+                                 && record.AttendanceDate.Date == attendanceDate.ToDateTime(new TimeOnly(0, 0)).Date)
+                .ToListAsync();
             
             return new ApolloAttendance
             {
@@ -45,11 +47,16 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
                 UserEmployeeId = userEmployeeId,
                 ApolloAttendanceHistories = attendanceHistories.Select(history => new ApolloAttendanceHistory
                 {
-                    AttendanceMethod = history.GetAttendanceMethodEnum(), // Map iOriginType to AttendanceMethod
+                    AttendanceMethod = history.GetAttendanceMethodEnum(), 
                     AttendanceOn = history.AttendanceOn,
                     IsEffective = history.IsEffect
                 }).ToList(),
-                Apollo1001Forms = null
+                Apollo1001Forms = attendanceHistoryRecords.Select(record => new Apollo1001Form
+                {
+                    FormKind = record.SourceFormKind,
+                    FormNo = record.SourceFormNo,
+                    ApprovalStatus = record.GetApollo1001ApprovalStatusEnum()
+                }).ToList()
             };
         }
     }

@@ -40,7 +40,13 @@ public class ApolloAttendanceController : ControllerBase
                         history.IsEffective
                     )
                 ).ToList(),
-                Apollo1001FromResponses = null
+                Apollo1001FromResponses = apolloAttendance.Apollo1001Forms?.Select(form => 
+                    new Apollo1001FromResponse(
+                        form.FormKind,
+                        form.FormNo,
+                        form.ApprovalStatus.ToString()
+                    )
+                ).ToList()
             }),
             error => Problem()
         );

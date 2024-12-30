@@ -8,6 +8,8 @@ public class DynamicDbContext: DbContext
     
     public DbSet<AttendanceHistory> AttendanceHistories { get; set; } = null!;
     
+    public DbSet<AttendanceHistoryRecord> AttendanceHistoryRecords { get; set; } = null!;
+    
     public DynamicDbContext(string connectionString)
         : base(new DbContextOptionsBuilder<DynamicDbContext>()
             .UseSqlServer(connectionString)
