@@ -5,6 +5,7 @@ using ASG.Infrastructure.Gaia1001Forms.AisaFlowDbSchemas;
 using ASG.Infrastructure.Gaia1001Forms.Views;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace ASG.Infrastructure.Gaia1001Forms.Persistence;
 
@@ -49,6 +50,8 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
         gaia1001Form.PtSyncFormOperations = gaia1001Form.PtSyncFormOperations
             .OrderBy(op => op.CreatedOn)
             .ToList();
+
+        TransformFormContentToJson(gaia1001Form.PtSyncFormOperations);
 
         return gaia1001Form;
     }
@@ -118,5 +121,35 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
                throw new InvalidOperationException(
                    $"No attendance information found for formKind: {formKind} and formNo: {formNo}.");
         ;
+    }
+
+    private void TransformFormContentToJson(List<PtSyncFormOperation> ptSyncFormOperations)
+    {
+        foreach (var operation in ptSyncFormOperations)
+            try
+            {
+                // Check the FormAction and deserialize to the appropriate type
+                switch (operation.FormAction)
+                {
+                    case FormAction.Apply:
+                        operation.ApplyReCheckInFormRequestBody = JsonConvert.DeserializeObject<ApplyReCheckInFormRequestBody>(operation.FormContent);
+                        break;
+
+                    case FormAction.Approve:
+                        operation.ApproveReCheckInFormRequestBody = JsonConvert.DeserializeObject<ApproveReCheckInFormRequestBody>(operation.FormContent);
+                        break;
+
+                    case FormAction.Recalled:
+                        operation.RecalledReCheckInFormRequestBody = JsonConvert.DeserializeObject<RecalledReCheckInFormRequestBody>(operation.FormContent);
+                        break;
+
+                    default:
+                        throw new InvalidOperationException($"Unknown FormAction: {operation.FormAction}");
+                }
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidOperationException($"Error deserializing FormContent: {ex.Message}");
+            }
     }
 }

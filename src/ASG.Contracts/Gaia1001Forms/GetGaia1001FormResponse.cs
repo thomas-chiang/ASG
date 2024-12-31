@@ -1,16 +1,5 @@
 namespace ASG.Contracts.Gaia1001Forms;
 
-// public record class GetGaia1001FormResponse(
-//     string FormKind,
-//     int FormNo,
-//     Guid CompanyId,
-//     Guid UserEmployeeId,
-//     List<PTSyncFormOperation> PtSyncFormOperations,
-//     string FormStatus,
-//     DateTime AttendanceOn,
-//     string AttendanceType
-// );
-
 public record GetGaia1001FormResponse
 {
     public string FormKind { get; init; }

@@ -1,3 +1,5 @@
+using ASG.Domain.Common;
+
 namespace ASG.Domain.Gaia1001Forms;
 
 public class PtSyncFormOperation
@@ -13,4 +15,10 @@ public class PtSyncFormOperation
     public Flag Flag { get; set; }
 
     public byte? RetryCount { get; set; }
+    
+    public RequestBody? ApplyReCheckInFormRequestBody { get; set; }
+    
+    public RequestBody? ApproveReCheckInFormRequestBody { get; set; }
+    
+    public RequestBody? RecalledReCheckInFormRequestBody {get; set;}
 }

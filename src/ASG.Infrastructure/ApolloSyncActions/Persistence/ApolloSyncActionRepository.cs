@@ -1,14 +1,14 @@
 using ASG.Application.ApolloSyncActions.Interfaces;
-using ASG.Domain.ApolloSyncActions;
+using ASG.Domain.ApolloSyncGaia1001FormOperation;
 
 namespace ASG.Infrastructure.ApolloSyncActions.Persistence;
 
 public class ApolloSyncActionRepository : IApolloSyncActionRepository
 {
-    private readonly List<ApolloSyncAction> _apolloSyncActions = new();
+    private readonly List<ApolloSyncGaia1001FormOperation> _apolloSyncActions = new();
     
-    public async Task AddApolloSyncActionAsync(ApolloSyncAction apolloSyncAction)
+    public async Task AddApolloSyncActionAsync(ApolloSyncGaia1001FormOperation apolloSyncGaia1001FormOperation)
     {
-        _apolloSyncActions.Add(apolloSyncAction);
+        _apolloSyncActions.Add(apolloSyncGaia1001FormOperation);
     }
 }

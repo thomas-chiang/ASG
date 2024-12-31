@@ -4,21 +4,21 @@ using ASG.Domain.ApolloAttendances;
 using ErrorOr;
 using MediatR;
 
-namespace ASG.Application.ApolloAttendances.Queries.GetApolloAttendance;
+namespace ASG.Application.ApolloAttendances.Queries.GetGaia1001FormWithApolloAttendance;
 
-public class GetApolloAttendanceQueryHandler : IRequestHandler<GetApolloAttendanceQuery, ErrorOr<ApolloAttendance>>
+public class GetGaia1001FormWithApolloAttendanceQueryHandler : IRequestHandler<GetGaia1001FormWithApolloAttendanceQuery, ErrorOr<GetGaia1001FormWithApolloAttendanceQueryResult>>
 {
     private readonly IApolloAttendanceRepository _apolloAttendanceRepository;
     private readonly IGaia1001FormRepository _gaia1001FormRepository;
     
-    public GetApolloAttendanceQueryHandler(IGaia1001FormRepository gaia1001FormRepository,
+    public GetGaia1001FormWithApolloAttendanceQueryHandler(IGaia1001FormRepository gaia1001FormRepository,
         IApolloAttendanceRepository apolloAttendanceRepository)
     {
         _gaia1001FormRepository = gaia1001FormRepository;
         _apolloAttendanceRepository = apolloAttendanceRepository;
     }
 
-    public async Task<ErrorOr<ApolloAttendance>> Handle(GetApolloAttendanceQuery query,
+    public async Task<ErrorOr<GetGaia1001FormWithApolloAttendanceQueryResult>> Handle(GetGaia1001FormWithApolloAttendanceQuery query,
         CancellationToken cancellationToken)
     {
         var gaia1001Form = await _gaia1001FormRepository.GetGaia1001Form(query.FormKind, query.FormNo);
@@ -34,16 +34,9 @@ public class GetApolloAttendanceQueryHandler : IRequestHandler<GetApolloAttendan
             gaia1001Form.AttendanceType
         );
         
-        return apolloAttendance is null
-            ? Error.NotFound(description: "ApolloAttendance not found")
-            : apolloAttendance;
-
-        return new ApolloAttendance
-        {
-            CompanyId = new Guid(),
-            UserEmployeeId = new Guid(),
-            ApolloAttendanceHistories = null,
-            Apollo1001Forms = null
-        };
+        if (apolloAttendance == null)
+            throw new InvalidOperationException($"ApolloAttendance not found.");
+        
+        return new GetGaia1001FormWithApolloAttendanceQueryResult(gaia1001Form, apolloAttendance);
     }
 }

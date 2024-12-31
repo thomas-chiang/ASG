@@ -23,13 +23,13 @@ public class ApolloSyncActionController : Controller
         var command = new CreateApolloSyncActionCommand(request.FormKindPlusFormNo);
         var createApolloSyncActionResult = await _mediator.Send(command);
         
-        // var response = new ApolloSyncActionResponse(
+        // var response = new CreateApolloSyncActionResponse(
         //     createApolloSyncActionResult.Value
         // );
         // return Ok(response);
         
         return createApolloSyncActionResult.MatchFirst(
-            apolloSyncAction => Ok(new ApolloSyncActionResponse(apolloSyncAction.AnonymousRequests.Count)),
+            apolloSyncAction => Ok(new CreateApolloSyncActionResponse(apolloSyncAction.AnonymousRequests.Count)),
             error => Problem()
         );
     }

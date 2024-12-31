@@ -12,4 +12,10 @@ public record PTSyncFormOperationResponse
     public string Flag { get; init; } = null!;
 
     public byte? RetryCount { get; init; }
+    
+    public ApplyReCheckInFormJsonResponse? ApplyReCheckInFormJson { get; init; }
+    
+    public ApproveReCheckInFormJsonResponse? ApproveReCheckInFormJson { get; init;}
+    
+    public RecalledReCheckInFormJsonResponse? RecalledReCheckInFormJson { get; init; }
 }

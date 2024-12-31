@@ -45,6 +45,8 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
             {
                 CompanyId = companyId,
                 UserEmployeeId = userEmployeeId,
+                AttendanceDate = attendanceDate,
+                AttendanceType = attendanceType,
                 ApolloAttendanceHistories = attendanceHistories.Select(history => new ApolloAttendanceHistory
                 {
                     AttendanceMethod = history.GetAttendanceMethodEnum(), 
