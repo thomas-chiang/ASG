@@ -15,10 +15,6 @@ public class PtSyncFormOperation
     public Flag Flag { get; set; }
 
     public byte? RetryCount { get; set; }
-    
-    public RequestBody? ApplyReCheckInFormRequestBody { get; set; }
-    
-    public RequestBody? ApproveReCheckInFormRequestBody { get; set; }
-    
-    public RequestBody? RecalledReCheckInFormRequestBody {get; set;}
+
+    public RequestBody FormActionJson { get; set; } = null!;
 }

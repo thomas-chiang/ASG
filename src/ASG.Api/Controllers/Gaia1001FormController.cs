@@ -1,5 +1,6 @@
 using ASG.Application.Gaia1001Forms.Queries.GetGaia1001Form;
 using ASG.Contracts.Gaia1001Forms;
+using ASG.Domain.Gaia1001Forms;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -28,36 +29,41 @@ public class Gaia1001FormController : ControllerBase
         var getGaia1001FormResult = await _mediator.Send(query);
 
         return getGaia1001FormResult.MatchFirst(
-            gaia1001Form => Ok(new GetGaia1001FormResponse
-            {
-                FormKind = gaia1001Form.FormKind,
-                FormNo = gaia1001Form.FormNo,
-                CompanyId = gaia1001Form.CompanyId,
-                UserEmployeeId = gaia1001Form.UserEmployeeId,
-                PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation =>
-                    new PTSyncFormOperationResponse
-                    {
-                        FormContent = operation.FormContent,
-                        FormAction = operation.FormAction.ToString(),
-                        CreatedOn = operation.CreatedOn,
-                        ModifiedOn = operation.ModifiedOn,
-                        Flag = operation.Flag.ToString(),
-                        RetryCount = operation.RetryCount,
-                        ApplyReCheckInFormJson = operation.ApplyReCheckInFormRequestBody != null
-                            ? JsonConvert.DeserializeObject<ApplyReCheckInFormJsonResponse>(operation.FormContent)
-                            : null,
-                        ApproveReCheckInFormJson = operation.ApproveReCheckInFormRequestBody != null
-                            ? JsonConvert.DeserializeObject<ApproveReCheckInFormJsonResponse>(operation.FormContent)
-                            : null,
-                        RecalledReCheckInFormJson = operation.RecalledReCheckInFormRequestBody != null
-                            ? JsonConvert.DeserializeObject<RecalledReCheckInFormJsonResponse>(operation.FormContent)
-                            : null
-                    }).ToList() ?? new List<PTSyncFormOperationResponse>(),
-                FormStatus = gaia1001Form.FormStatus.ToString(),
-                AttendanceOn = gaia1001Form.AttendanceOn,
-                AttendanceType = gaia1001Form.AttendanceType.ToString()
-            }),
+            gaia1001Form => Ok(ToGetGaia1001FormResponse(gaia1001Form)),
             error => Problem()
         );
+    }
+    
+    public static GetGaia1001FormResponse ToGetGaia1001FormResponse(Gaia1001Form gaia1001Form)
+    {
+        return new GetGaia1001FormResponse
+        {
+            FormKind = gaia1001Form.FormKind,
+            FormNo = gaia1001Form.FormNo,
+            CompanyId = gaia1001Form.CompanyId,
+            UserEmployeeId = gaia1001Form.UserEmployeeId,
+            PtSyncFormOperations = gaia1001Form.PtSyncFormOperations?.Select(operation =>
+                new PTSyncFormOperationResponse
+                {
+                    FormContent = operation.FormContent,
+                    FormAction = operation.FormAction.ToString(),
+                    CreatedOn = operation.CreatedOn,
+                    ModifiedOn = operation.ModifiedOn,
+                    Flag = operation.Flag.ToString(),
+                    RetryCount = operation.RetryCount,
+                    ApplyReCheckInFormJson = operation.FormAction == FormAction.Apply
+                        ? JsonConvert.DeserializeObject<ApplyReCheckInFormJsonResponse>(operation.FormContent)
+                        : null,
+                    ApproveReCheckInFormJson = operation.FormAction == FormAction.Approve
+                        ? JsonConvert.DeserializeObject<ApproveReCheckInFormJsonResponse>(operation.FormContent)
+                        : null,
+                    RecalledReCheckInFormJson = operation.FormAction == FormAction.Recalled
+                        ? JsonConvert.DeserializeObject<RecalledReCheckInFormJsonResponse>(operation.FormContent)
+                        : null
+                }).ToList() ?? new List<PTSyncFormOperationResponse>(),
+            FormStatus = gaia1001Form.FormStatus.ToString(),
+            AttendanceOn = gaia1001Form.AttendanceOn,
+            AttendanceType = gaia1001Form.AttendanceType.ToString()
+        };
     }
 }

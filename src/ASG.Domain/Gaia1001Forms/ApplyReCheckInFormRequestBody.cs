@@ -13,7 +13,7 @@ public record ApplyReCheckInFormRequestBody(
     string AttendanceOn,
     string PunchesLocationId,
     string? LocationDetails,
-    string ReasonsForMissedClocking,
+    string? ReasonsForMissedClocking,
     string? ExtendWorkHourType,
     string? CheckInTimeoutType,
     string? CheckInPersonalReasonTypeId,

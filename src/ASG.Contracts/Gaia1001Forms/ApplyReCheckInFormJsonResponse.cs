@@ -16,6 +16,5 @@ public record ApplyReCheckInFormJsonResponse(
     string? ExtendWorkHourType,
     string? CheckInTimeoutType,
     string? CheckInPersonalReasonTypeId,
-    string? CheckInPersonalReason,
-    string TimeZone
+    string? CheckInPersonalReason
     );

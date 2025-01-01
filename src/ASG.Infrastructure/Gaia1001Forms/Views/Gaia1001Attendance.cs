@@ -10,7 +10,28 @@ public class Gaia1001Attendance
     public string FormStatus { get; set; }
     public string AttendanceType { get; set; }
     public DateTime AttendanceOn { get; set; }
-
+    
+    public int IsBehalf { get; set; }
+    
+    public string PunchesLocationId { get; set; }
+    
+    public string? LocationDetails { get; set; }
+    
+    public string? ReasonsForMissedClocking { get; set; }
+    
+    public string? ExtendWorkHourType { get; set; }
+    
+    public string? CheckInTimeoutType { get; set; }
+    
+    public string? CheckInPersonalReasonTypeId { get; set; }
+    
+    public string? CheckInPersonalReason { get; set; }
+    
+    public string CompanyId { get; set; }
+    
+    public string UserEmployeeId { get; set; }
+    
+    public int IsApproved { get; set; }
     public Gaia1001FormStatus GetFormStatusEnum()
     {
         return FormStatus switch

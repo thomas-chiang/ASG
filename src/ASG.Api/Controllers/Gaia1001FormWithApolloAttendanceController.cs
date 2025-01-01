@@ -32,49 +32,21 @@ public class Gaia1001FormWithApolloAttendanceController : ControllerBase
 
         return getGaia1001FormWithApolloAttendanceQueryResult.MatchFirst(
             result => Ok(
-                new GetGaia1001FormWithApolloAttendanceResponse(
-                    new GetGaia1001FormResponse
-                    {
-                        FormKind = result.gaia1001Form.FormKind,               
-                        FormNo = result.gaia1001Form.FormNo,                 
-                        CompanyId = result.gaia1001Form.CompanyId,              
-                        UserEmployeeId = result.gaia1001Form.UserEmployeeId,         
-                        PtSyncFormOperations = result.gaia1001Form.PtSyncFormOperations?.Select(operation => new PTSyncFormOperationResponse
-                        {
-                            FormContent = operation.FormContent,
-                            FormAction = operation.FormAction.ToString(),
-                            CreatedOn = operation.CreatedOn,
-                            ModifiedOn = operation.ModifiedOn,
-                            Flag = operation.Flag.ToString(),
-                            RetryCount = operation.RetryCount,
-                            ApplyReCheckInFormJson = operation.ApplyReCheckInFormRequestBody != null
-                                ? JsonConvert.DeserializeObject<ApplyReCheckInFormJsonResponse>(operation.FormContent)
-                                : null,
-                            ApproveReCheckInFormJson = operation.ApproveReCheckInFormRequestBody != null
-                                ? JsonConvert.DeserializeObject<ApproveReCheckInFormJsonResponse>(operation.FormContent)
-                                : null,
-                            RecalledReCheckInFormJson = operation.RecalledReCheckInFormRequestBody != null
-                                ? JsonConvert.DeserializeObject<RecalledReCheckInFormJsonResponse>(operation.FormContent)
-                                : null
-                        }).ToList() ?? new List<PTSyncFormOperationResponse>(),  
-                        FormStatus = result.gaia1001Form.FormStatus.ToString(),
-                        AttendanceOn = result.gaia1001Form.AttendanceOn,
-                        AttendanceType = result.gaia1001Form.AttendanceType.ToString()
-                    },
+                new GetGaia1001FormWithApolloAttendanceResponse(Gaia1001FormController.ToGetGaia1001FormResponse(result.Gaia1001Form),
                     new ApolloAttendanceResponse
                     {
-                        CompanyId = result.apolloAttendance.CompanyId,
-                        UserEmployeeId = result.apolloAttendance.UserEmployeeId,
-                        AttendanceDate = result.apolloAttendance.AttendanceDate,
-                        AttendanceType = result.apolloAttendance.AttendanceType.ToString(),
-                        ApolloAttendanceHistories = result.apolloAttendance.ApolloAttendanceHistories?.Select(history =>
+                        CompanyId = result.ApolloAttendance.CompanyId,
+                        UserEmployeeId = result.ApolloAttendance.UserEmployeeId,
+                        AttendanceDate = result.ApolloAttendance.AttendanceDate,
+                        AttendanceType = result.ApolloAttendance.AttendanceType.ToString(),
+                        ApolloAttendanceHistories = result.ApolloAttendance.ApolloAttendanceHistories?.Select(history =>
                             new ApolloAttendanceHistoryResponse(
                                 history.AttendanceOn,
                                 history.AttendanceMethod.ToString(),
                                 history.IsEffective
                             )
                         ).ToList(),
-                        Apollo1001Froms = result.apolloAttendance.Apollo1001Forms?.Select(form =>
+                        Apollo1001Froms = result.ApolloAttendance.Apollo1001Forms?.Select(form =>
                             new Apollo1001FromResponse(
                                 form.FormKind,
                                 form.FormNo,

@@ -16,5 +16,5 @@ public class ApolloAttendance
 
     public List<ApolloAttendanceHistory> ApolloAttendanceHistories { get; set; } = new List<ApolloAttendanceHistory>();
     
-    public List<Apollo1001Form>? Apollo1001Forms { get; set; } = new List<Apollo1001Form>();
+    public List<Apollo1001Form> Apollo1001Forms { get; set; } = new List<Apollo1001Form>();
 }

@@ -1,45 +1,38 @@
-namespace ASG.Domain.Gaia1001Forms
+using System.ComponentModel;
+
+namespace ASG.Domain.Gaia1001Forms;
+
+public enum Gaia1001FormStatus
 {
-    public enum Gaia1001FormStatus
-    {
-        /// <summary>
-        /// 未完成
-        /// </summary>
-        NotComplete,
+    // 未完成
+    [Description("NC")] 
+    NotComplete,
 
-        /// <summary>
-        /// 已儲存
-        /// </summary>
-        Save,
+    // 已儲存
+    [Description("SA")]
+    Save,
 
-        /// <summary>
-        /// 待簽核
-        /// </summary>
-        WaitingApprove,
+    // 待簽核
+    [Description("WA")]
+    WaitingApprove,
 
-        /// <summary>
-        /// 簽核中
-        /// </summary>
-        UnderApproving,
+    // 簽核中
+    [Description("UA")]
+    UnderApproving,
 
-        /// <summary>
-        /// 退回 (簽核人拒簽)
-        /// </summary>
-        Rejected,
+    // 退回 (簽核人拒簽)
+    [Description("RJ")]
+    Rejected,
+    
+    // 簽核完成
+    [Description("AP")]
+    Approved,
 
-        /// <summary>
-        /// 簽核完成
-        /// </summary>
-        Approved,
+    // 撤回
+    [Description("RC")]
+    Recall,
 
-        /// <summary>
-        /// 撤回
-        /// </summary>
-        Recall,
-
-        /// <summary>
-        /// 已刪除
-        /// </summary>
-        Deleted
-    }
+    // 已刪除
+    [Description("DE")]
+    Deleted
 }

@@ -34,12 +34,23 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
         {
             FormKind = formKind,
             FormNo = formNo,
-            CompanyId = pTSyncForms.First().CompanyId,
-            UserEmployeeId = pTSyncForms.First().UserEmployeeId,
+            CompanyId = new Guid(attendanceInfo.CompanyId),
+            UserEmployeeId = new Guid(attendanceInfo.UserEmployeeId),
             PtSyncFormOperations = GetPtSyncFormOperations(pTSyncForms),
             AttendanceOn = attendanceInfo.AttendanceOn,
             FormStatus = attendanceInfo.GetFormStatusEnum(),
-            AttendanceType = attendanceInfo.GetAttendanceTypeEnum()
+            AttendanceType = attendanceInfo.GetAttendanceTypeEnum(),
+            IsBehalf = attendanceInfo.IsBehalf == 1,
+            PunchesLocationId = new Guid(attendanceInfo.PunchesLocationId),
+            LocationDetails = attendanceInfo.LocationDetails,
+            ReasonsForMissedClocking = attendanceInfo.ReasonsForMissedClocking,
+            ExtendWorkHourType = attendanceInfo.ExtendWorkHourType,
+            CheckInTimeoutType = attendanceInfo.CheckInTimeoutType,
+            CheckInPersonalReasonTypeId = attendanceInfo.CheckInPersonalReasonTypeId != null
+                ? new Guid(attendanceInfo.CheckInPersonalReasonTypeId)
+                : null,
+            CheckInPersonalReason = attendanceInfo.CheckInPersonalReason,
+            IsApproved = attendanceInfo.IsApproved == 1,
         };
 
         if (gaia1001Form.AttendanceOn.Year <= 2024)
@@ -105,7 +116,36 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
             SELECT
                 h.form_status as FormStatus,
                 f.ATTENDANCETYPE AS AttendanceType,
-                DATEADD(HOUR, 8, CAST(CONVERT(DATETIMEOFFSET, (CONVERT(NVARCHAR, f.[DATETIME], 126) + f.TIMEZONE)) AT TIME ZONE 'UTC' AS DATETIME)) AS AttendanceOn
+                DATEADD(HOUR, 8, CAST(CONVERT(DATETIMEOFFSET, (CONVERT(NVARCHAR, f.[DATETIME], 126) + f.TIMEZONE)) AT TIME ZONE 'UTC' AS DATETIME)) AS AttendanceOn,
+     	        IIF(f.[NAME] <> f.USERTUBEEMPID,1,0) as IsBehalf,
+                f.LOCATION	as PunchesLocationId,
+                f.LOCATIONINFO as LocationDetails,
+                f.[REASON] as ReasonsForMissedClocking,
+                CASE 
+     		        WHEN f.ADVANCEWORKTYPE <> ''
+     			        THEN 'AdvanceWork'
+     		        WHEN f.POSTPONEWORKTYPE <> ''
+     			        THEN 'PostponeWork'
+     		        ELSE NULL
+     		     END as ExtendWorkHourType,
+                 CASE 
+     		        WHEN f.ADVANCEWORKTYPE <> ''
+     			        THEN f.ADVANCEWORKTYPE
+     		        WHEN f.POSTPONEWORKTYPE <> ''
+     			        THEN f.POSTPONEWORKTYPE
+     		        ELSE NULL
+     	         END as CheckInTimeoutType,
+                 CASE 
+     		        WHEN f.ADVANCEWORKTYPE <> ''
+     			        THEN f.ADVANCEREASONLIST
+     		        WHEN f.POSTPONEWORKTYPE <> ''
+     			        THEN f.POSTPONEREASONLIST
+     		        ELSE NULL
+     	         END as CheckInPersonalReasonTypeId,
+     	         f.CHECKINPERSONALREASON as CheckInPersonalReason,
+     	         f.USERTUBECOMPANYID as CompanyId,
+     	         f.USERTUBEEMPID as	UserEmployeeId,
+     	         IIF(h.form_status = 'AP',1,0) as IsApproved 
             FROM {tableName} f
             JOIN gbpm.fm_form_header h ON f.form_no = h.form_no
             WHERE h.form_kind = @formKind AND h.form_no = @formNo";
@@ -132,15 +172,18 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
                 switch (operation.FormAction)
                 {
                     case FormAction.Apply:
-                        operation.ApplyReCheckInFormRequestBody = JsonConvert.DeserializeObject<ApplyReCheckInFormRequestBody>(operation.FormContent);
+                        operation.FormActionJson=
+                            JsonConvert.DeserializeObject<ApplyReCheckInFormRequestBody>(operation.FormContent);
                         break;
 
                     case FormAction.Approve:
-                        operation.ApproveReCheckInFormRequestBody = JsonConvert.DeserializeObject<ApproveReCheckInFormRequestBody>(operation.FormContent);
+                        operation.FormActionJson =
+                            JsonConvert.DeserializeObject<ApproveReCheckInFormRequestBody>(operation.FormContent);
                         break;
 
                     case FormAction.Recalled:
-                        operation.RecalledReCheckInFormRequestBody = JsonConvert.DeserializeObject<RecalledReCheckInFormRequestBody>(operation.FormContent);
+                        operation.FormActionJson =
+                            JsonConvert.DeserializeObject<RecalledReCheckInFormRequestBody>(operation.FormContent);
                         break;
 
                     default:
