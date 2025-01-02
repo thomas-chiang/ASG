@@ -2,9 +2,8 @@
 ###
 POST {{baseUrl}}/ApolloSyncGaia1001FormOperation
 Content-Type: application/json
-
 {
-    "FormKindPlusFormNo":"WVT9.FORM.1001Plus48585"
+  "formKind": "FMC9.FORM.1001",
+  "formNo": 224460
 }
-
 ###

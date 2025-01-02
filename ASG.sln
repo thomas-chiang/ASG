@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASG.Api", "src\ASG.Api\ASG.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASG.Contracts", "src\ASG.Contracts\ASG.Contracts.csproj", "{693AC6DE-11D4-4072-AE8F-CE223776E28E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{82150DEB-271F-4FB1-888B-E7C3B3B1ED92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{693AC6DE-11D4-4072-AE8F-CE223776E28E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{693AC6DE-11D4-4072-AE8F-CE223776E28E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{693AC6DE-11D4-4072-AE8F-CE223776E28E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82150DEB-271F-4FB1-888B-E7C3B3B1ED92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82150DEB-271F-4FB1-888B-E7C3B3B1ED92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82150DEB-271F-4FB1-888B-E7C3B3B1ED92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82150DEB-271F-4FB1-888B-E7C3B3B1ED92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D8AA2043-28DA-4E84-AC00-860C69436D35} = {77AEC930-5DD6-41BC-AC77-701157F57D30}

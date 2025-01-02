@@ -36,6 +36,7 @@ public class ApolloSyncGaia1001FormOperationController : Controller
                 Gaia1001FormController.ToGetGaia1001FormResponse(operation.Gaia1001Form),
                 Gaia1001FormWithApolloAttendanceController.ToApolloAttendanceResponse(operation.ApolloAttendance),
                 new ApolloSyncGaia1001FormOperationResponse(
+                    operation.Situation.ToString(),
                     GetSync1001FormSituationDescription(operation.Situation),
                     operation.AnonymousRequests.Select(anonymousRequest =>
                         new ApolloSyncGaia1001FormRequest
