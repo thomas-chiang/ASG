@@ -14,7 +14,7 @@ public class ApolloSyncGaia1001FormOperation
     public Sync1001FormSituation? Situation { get; set; }
 
     public ApolloAttendance? UpdatedApolloAttendance { get; set; }
-    
+
     public void SetAnonymousRequestsToBeSent()
     {
         if (HasOtherEffectiveAttendanceMethod()) return;
@@ -54,30 +54,50 @@ public class ApolloSyncGaia1001FormOperation
         }
 
         if (UpdatedApolloAttendance == null)
-            throw new InvalidOperationException("Need to fetch again updated apollo attendance.");
+            throw new InvalidOperationException("Need to fetch again apollo attendance.");
 
         if (UpdatedApolloAttendance.Apollo1001Forms.Any(form =>
-                form.FormKind == Gaia1001Form.FormKind && form.FormNo == Gaia1001Form.FormNo))
-            Situation = Sync1001FormSituation.NormalFailSync;
+                form.FormKind == Gaia1001Form.FormKind &&
+                form.FormNo == Gaia1001Form.FormNo &&
+                (
+                    (
+                        form.ApprovalStatus == Apollo1001ApprovalStatus.Ok
+                        && Gaia1001Form.FormStatus == Gaia1001FormStatus.Approved
+                    )
+                    ||
+                    (
+                        form.ApprovalStatus == Apollo1001ApprovalStatus.Unknown
+                        && new HashSet<Gaia1001FormStatus> {
+                            Gaia1001FormStatus.WaitingApprove,
+                            Gaia1001FormStatus.UnderApproving
+                        }.Contains(Gaia1001Form.FormStatus)
+                    )
+                    ||
+                    (
+                        form.ApprovalStatus == Apollo1001ApprovalStatus.Deny
+                        && Gaia1001Form.FormStatus == Gaia1001FormStatus.Rejected
+                    )
+                    ||
+                    (
+                        form.ApprovalStatus == Apollo1001ApprovalStatus.Delete &&
+                        Gaia1001Form.FormStatus == Gaia1001FormStatus.Deleted
+                    )
+                )
+            )) Situation = Sync1001FormSituation.NormalFailSync;
     }
-    
+
     private bool HasOtherEffectiveAttendanceMethod()
     {
-        return(
-            
-            (   // already has effective record with other AttendanceMethod
-                ApolloAttendance.ApolloAttendanceHistories.Any(history =>
-                history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval)
-            ) 
-            || ( // already has other effective 1001 form
-                ApolloAttendance.ApolloAttendanceHistories.Any(history =>
-                    history.IsEffective && history.AttendanceMethod == AttendanceMethod.Approval)
-                &&
-                ApolloAttendance.Apollo1001Forms.Any(form => 
-                    form.ApprovalStatus == Apollo1001ApprovalStatus.Ok && form.FormNo != Gaia1001Form.FormNo)
-            )
-            
-        ) ;
+        // already has effective record with other AttendanceMethod
+        return ApolloAttendance.ApolloAttendanceHistories.Any(history =>
+                   history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval)
+               || ( // already has other effective 1001 form
+                   ApolloAttendance.ApolloAttendanceHistories.Any(history =>
+                       history.IsEffective && history.AttendanceMethod == AttendanceMethod.Approval)
+                   &&
+                   ApolloAttendance.Apollo1001Forms.Any(form =>
+                       form.ApprovalStatus == Apollo1001ApprovalStatus.Ok && form.FormNo != Gaia1001Form.FormNo)
+               );
     }
 
     private Apollo1001Form? GetApollo1001FormMatchingGaia1001Form()
@@ -180,7 +200,7 @@ public class ApolloSyncGaia1001FormOperation
         var attribute = (DescriptionAttribute?)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
         return attribute == null ? status.ToString() : attribute.Description;
     }
-    
+
     // public ApolloAttendanceHistory? GetApolloEffectiveHistory()
     // {
     //     var isEffectiveHistories = ApolloAttendance.ApolloAttendanceHistories.Where(h => h.IsEffective).ToList();

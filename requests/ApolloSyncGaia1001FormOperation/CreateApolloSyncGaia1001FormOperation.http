@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5212
 ###
-POST {{baseUrl}}/ApolloSyncAction
+POST {{baseUrl}}/ApolloSyncGaia1001FormOperation
 Content-Type: application/json
 
 {
