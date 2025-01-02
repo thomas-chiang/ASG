@@ -14,24 +14,7 @@ public class ApolloSyncGaia1001FormOperation
     public Sync1001FormSituation? Situation { get; set; }
 
     public ApolloAttendance? UpdatedApolloAttendance { get; set; }
-
-    private bool HasOtherEffectiveAttendanceMethod()
-    {
-        // Apollo already has record of other AttendanceMethod
-        return ApolloAttendance.ApolloAttendanceHistories.Any(history =>
-            history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval);
-    }
-
-    public ApolloAttendanceHistory? GetApolloEffectiveHistory()
-    {
-        var isEffectiveHistories = ApolloAttendance.ApolloAttendanceHistories.Where(h => h.IsEffective).ToList();
-
-        if (isEffectiveHistories.Count > 1)
-            throw new InvalidOperationException("ApolloAttendanceHistories must only contain one effective item.");
-
-        return isEffectiveHistories.SingleOrDefault();
-    }
-
+    
     public void SetAnonymousRequestsToBeSent()
     {
         if (HasOtherEffectiveAttendanceMethod()) return;
@@ -76,6 +59,25 @@ public class ApolloSyncGaia1001FormOperation
         if (UpdatedApolloAttendance.Apollo1001Forms.Any(form =>
                 form.FormKind == Gaia1001Form.FormKind && form.FormNo == Gaia1001Form.FormNo))
             Situation = Sync1001FormSituation.NormalFailSync;
+    }
+    
+    private bool HasOtherEffectiveAttendanceMethod()
+    {
+        return(
+            
+            (   // already has effective record with other AttendanceMethod
+                ApolloAttendance.ApolloAttendanceHistories.Any(history =>
+                history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval)
+            ) 
+            || ( // already has other effective 1001 form
+                ApolloAttendance.ApolloAttendanceHistories.Any(history =>
+                    history.IsEffective && history.AttendanceMethod == AttendanceMethod.Approval)
+                &&
+                ApolloAttendance.Apollo1001Forms.Any(form => 
+                    form.ApprovalStatus == Apollo1001ApprovalStatus.Ok && form.FormNo != Gaia1001Form.FormNo)
+            )
+            
+        ) ;
     }
 
     private Apollo1001Form? GetApollo1001FormMatchingGaia1001Form()
@@ -178,4 +180,14 @@ public class ApolloSyncGaia1001FormOperation
         var attribute = (DescriptionAttribute?)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
         return attribute == null ? status.ToString() : attribute.Description;
     }
+    
+    // public ApolloAttendanceHistory? GetApolloEffectiveHistory()
+    // {
+    //     var isEffectiveHistories = ApolloAttendance.ApolloAttendanceHistories.Where(h => h.IsEffective).ToList();
+    //
+    //     if (isEffectiveHistories.Count > 1)
+    //         throw new InvalidOperationException("ApolloAttendanceHistories must only contain one effective item.");
+    //
+    //     return isEffectiveHistories.SingleOrDefault();
+    // }
 }

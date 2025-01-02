@@ -48,13 +48,15 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
                 AttendanceDate = attendanceDate,
                 AttendanceType = attendanceType,
                 ApolloAttendanceHistories = attendanceHistories.Select(history => new ApolloAttendanceHistory
-                {
+                {   
+                    AttendanceHistoryId = history.AttendanceHistoryId,
                     AttendanceMethod = history.GetAttendanceMethodEnum(), 
                     AttendanceOn = history.AttendanceOn,
                     IsEffective = history.IsEffect
                 }).ToList(),
                 Apollo1001Forms = attendanceHistoryRecords.Select(record => new Apollo1001Form
                 {
+                    AttendanceHistoryId = record.AttendanceHistoryId,
                     FormKind = record.SourceFormKind,
                     FormNo = record.SourceFormNo,
                     ApprovalStatus = record.GetApollo1001ApprovalStatusEnum()

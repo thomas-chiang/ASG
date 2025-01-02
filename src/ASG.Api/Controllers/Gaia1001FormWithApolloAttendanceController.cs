@@ -2,6 +2,8 @@ using ASG.Application.ApolloAttendances.Queries.GetGaia1001FormWithApolloAttenda
 using ASG.Contracts.ApolloAttendences;
 using ASG.Contracts.Gaia1001Forms;
 using ASG.Contracts.Gaia1001FormWithApolloAttendances;
+using ASG.Domain.ApolloAttendances;
+using ASG.Domain.Gaia1001Forms;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -32,31 +34,39 @@ public class Gaia1001FormWithApolloAttendanceController : ControllerBase
 
         return getGaia1001FormWithApolloAttendanceQueryResult.MatchFirst(
             result => Ok(
-                new GetGaia1001FormWithApolloAttendanceResponse(Gaia1001FormController.ToGetGaia1001FormResponse(result.Gaia1001Form),
-                    new ApolloAttendanceResponse
-                    {
-                        CompanyId = result.ApolloAttendance.CompanyId,
-                        UserEmployeeId = result.ApolloAttendance.UserEmployeeId,
-                        AttendanceDate = result.ApolloAttendance.AttendanceDate,
-                        AttendanceType = result.ApolloAttendance.AttendanceType.ToString(),
-                        ApolloAttendanceHistories = result.ApolloAttendance.ApolloAttendanceHistories?.Select(history =>
-                            new ApolloAttendanceHistoryResponse(
-                                history.AttendanceOn,
-                                history.AttendanceMethod.ToString(),
-                                history.IsEffective
-                            )
-                        ).ToList(),
-                        Apollo1001Froms = result.ApolloAttendance.Apollo1001Forms?.Select(form =>
-                            new Apollo1001FromResponse(
-                                form.FormKind,
-                                form.FormNo,
-                                form.ApprovalStatus.ToString()
-                            )
-                        ).ToList()
-                    }
+                new GetGaia1001FormWithApolloAttendanceResponse(
+                    Gaia1001FormController.ToGetGaia1001FormResponse(result.Gaia1001Form),
+                    ToApolloAttendanceResponse(result.ApolloAttendance)
                 )
             ),
             error => Problem()
         );
+    }
+
+    public static ApolloAttendanceResponse ToApolloAttendanceResponse(ApolloAttendance apolloAttendance)
+    {
+        return new ApolloAttendanceResponse
+        {
+            CompanyId = apolloAttendance.CompanyId,
+            UserEmployeeId = apolloAttendance.UserEmployeeId,
+            AttendanceDate = apolloAttendance.AttendanceDate,
+            AttendanceType = apolloAttendance.AttendanceType.ToString(),
+            ApolloAttendanceHistories = apolloAttendance.ApolloAttendanceHistories?.Select(history =>
+                new ApolloAttendanceHistoryResponse(
+                    history.AttendanceHistoryId.ToString(),
+                    history.AttendanceOn,
+                    history.AttendanceMethod.ToString(),
+                    history.IsEffective
+                )
+            ).ToList(),
+            Apollo1001Froms = apolloAttendance.Apollo1001Forms?.Select(form =>
+                new Apollo1001FromResponse(
+                    form.AttendanceHistoryId.ToString(),
+                    form.FormKind,
+                    form.FormNo,
+                    form.ApprovalStatus.ToString()
+                )
+            ).ToList()
+        };
     }
 }

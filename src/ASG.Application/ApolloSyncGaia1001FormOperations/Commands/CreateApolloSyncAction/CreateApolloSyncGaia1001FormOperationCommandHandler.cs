@@ -52,15 +52,18 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
         {
             await _anonymousRequestSender.SendAndUpdateAnonymousRequest(request);
         }
+
+        if (apolloSyncGaia1001FormOperation.AnonymousRequests.Count != 0)
+        {
+            var updatedApolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(
+                gaia1001Form.CompanyId,
+                gaia1001Form.UserEmployeeId,
+                DateOnly.FromDateTime(gaia1001Form.AttendanceOn),
+                gaia1001Form.AttendanceType
+            );
         
-        var updatedApolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(
-            gaia1001Form.CompanyId,
-            gaia1001Form.UserEmployeeId,
-            DateOnly.FromDateTime(gaia1001Form.AttendanceOn),
-            gaia1001Form.AttendanceType
-        );
-        
-        apolloSyncGaia1001FormOperation.UpdatedApolloAttendance = updatedApolloAttendance;
+            apolloSyncGaia1001FormOperation.UpdatedApolloAttendance = updatedApolloAttendance;
+        }
         
         apolloSyncGaia1001FormOperation.SetSituation();
 
