@@ -56,7 +56,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
         if (gaia1001Form.AttendanceOn.Year <= 2024)
             gaia1001Form.PtSyncFormOperations.AddRange(await Get2024ArchivedPtSyncFormOperations(formKind, formNo));
         else
-            gaia1001Form.PtSyncFormOperations.AddRange(await Get2024ArchivedPtSyncFormOperations(formKind, formNo));
+            gaia1001Form.PtSyncFormOperations.AddRange(await Get2025ArchivedPtSyncFormOperations(formKind, formNo));
 
         gaia1001Form.PtSyncFormOperations = gaia1001Form.PtSyncFormOperations
             .OrderBy(op => op.CreatedOn)
