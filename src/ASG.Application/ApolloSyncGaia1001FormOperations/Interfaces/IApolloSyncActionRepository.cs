@@ -1,6 +1,0 @@
-namespace ASG.Application.ApolloSyncGaia1001FormOperations.Interfaces;
-
-public interface IApolloSyncActionRepository
-{
-    Task AddApolloSyncActionAsync(Domain.ApolloSyncGaia1001FormOperation.ApolloSyncGaia1001FormOperation apolloSyncGaia1001FormOperation);
-}

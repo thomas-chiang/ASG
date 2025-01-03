@@ -1,9 +1,7 @@
 using ASG.Application.ApolloAttendances.Interfaces;
-using ASG.Application.ApolloSyncGaia1001FormOperations.Interfaces;
 using ASG.Application.Common.Interfaces;
 using ASG.Application.Gaia1001Forms.Interfaces;
 using ASG.Infrastructure.ApolloAttendences.Persistence;
-using ASG.Infrastructure.ApolloSyncActions.Persistence;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
 using ASG.Infrastructure.Common;
 using ASG.Infrastructure.Gaia1001Forms.Persistence;
@@ -32,7 +30,6 @@ public static class DependencyInjection
         //     options.UseSqlServer(connectionString));
 
         services
-            .AddScoped<IApolloSyncActionRepository, ApolloSyncActionRepository>()
             .AddScoped<IGaia1001FormRepository, Gaia1001FormRepository>()
             .AddScoped<IApolloAttendanceRepository, ApolloAttendenceRepository>();
             
