@@ -6,7 +6,6 @@ namespace ASG.Domain.Gaia1001Forms;
 
 public class Gaia1001Form
 {
-    // TODO: create class FormKind
     public required string FormKind { get; set; }
 
     public required int FormNo { get; set; }
@@ -31,9 +30,9 @@ public class Gaia1001Form
     
     public string? ReasonsForMissedClocking { get; set; }
     
-    public string? ExtendWorkHourType { get; set; }
+    public string? ExtendWorkHourType { get; set; } // TODO: string to enum
     
-    public string? CheckInTimeoutType { get; set; }
+    public string? CheckInTimeoutType { get; set; } // TODO: string to enum
     
     public Guid? CheckInPersonalReasonTypeId { get; set; }
     
