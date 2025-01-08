@@ -1,7 +1,13 @@
 using System.ComponentModel;
 using ASG.Domain.ApolloAttendances;
+using ASG.Domain.ApolloAttendances.Enums;
+using ASG.Domain.ApolloSyncGaia1001FormOperation.Enums;
+using ASG.Domain.ApolloSyncGaia1001FormOperation.Requests;
 using ASG.Domain.Common;
+using ASG.Domain.Common.Enums;
 using ASG.Domain.Gaia1001Forms;
+using ASG.Domain.Gaia1001Forms.Enums;
+using ASG.Domain.Gaia1001Forms.RequestBodys;
 using ErrorOr;
 
 namespace ASG.Domain.ApolloSyncGaia1001FormOperation;

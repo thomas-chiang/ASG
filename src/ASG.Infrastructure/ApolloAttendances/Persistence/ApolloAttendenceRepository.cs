@@ -1,11 +1,12 @@
 using ASG.Application.ApolloAttendances.Interfaces;
 using ASG.Domain.ApolloAttendances;
 using ASG.Domain.Common;
-using ASG.Infrastructure.ApolloAttendences.DynamicDbSchemas;
+using ASG.Domain.Common.Enums;
+using ASG.Infrastructure.ApolloAttendances.AsiaTubeDbSchemas;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace ASG.Infrastructure.ApolloAttendences.Persistence;
+namespace ASG.Infrastructure.ApolloAttendances.Persistence;
 
 public class ApolloAttendenceRepository : IApolloAttendanceRepository
 {
@@ -25,7 +26,7 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
     {
         var connectionString = await _asiaTubeManageDbContext.GetCompanyDbConnectionString(companyId);
         
-        using (var context = new DynamicDbContext(connectionString))
+        using (var context = new AsiaTubeDbContext(connectionString))
         {
             var attendanceHistories = await context.AttendanceHistories
                 .Where(history => history.CompanyId == companyId 

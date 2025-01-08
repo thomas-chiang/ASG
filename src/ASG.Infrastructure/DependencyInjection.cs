@@ -1,7 +1,7 @@
 using ASG.Application.ApolloAttendances.Interfaces;
 using ASG.Application.Common.Interfaces;
 using ASG.Application.Gaia1001Forms.Interfaces;
-using ASG.Infrastructure.ApolloAttendences.Persistence;
+using ASG.Infrastructure.ApolloAttendances.Persistence;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
 using ASG.Infrastructure.Common;
 using ASG.Infrastructure.Gaia1001Forms.Persistence;

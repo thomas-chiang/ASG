@@ -1,4 +1,4 @@
-namespace ASG.Domain.Common;
+namespace ASG.Domain.Common.Enums;
 
 public enum AttendanceType
 {

@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ASG.Domain.Gaia1001Forms;
+using ASG.Domain.Gaia1001Forms.Enums;
 
-namespace ASG.Infrastructure.Gaia1001Forms.AisaFlowDbSchemas;
+namespace ASG.Infrastructure.Common.AisaFlowDbSchemas;
 
 [Table("PTSyncForm_Archive_2025", Schema = "gbpm")]
 public class PtSyncFormArchive2025
@@ -37,9 +38,9 @@ public class PtSyncFormArchive2025
     {
         return FormAction switch
         {
-            1 => ASG.Domain.Gaia1001Forms.FormAction.Apply,
-            2 => ASG.Domain.Gaia1001Forms.FormAction.Approve,
-            3 => ASG.Domain.Gaia1001Forms.FormAction.Recalled,
+            1 => Domain.Gaia1001Forms.Enums.FormAction.Apply,
+            2 => Domain.Gaia1001Forms.Enums.FormAction.Approve,
+            3 => Domain.Gaia1001Forms.Enums.FormAction.Recalled,
             _ => throw new InvalidOperationException($"Invalid FormAction value: {FormAction}")
         };
     }
@@ -48,8 +49,8 @@ public class PtSyncFormArchive2025
     {
         return Flag switch
         {
-            1 => Domain.Gaia1001Forms.Flag.Success,
-            2 => Domain.Gaia1001Forms.Flag.Fail,
+            1 => Domain.Gaia1001Forms.Enums.Flag.Success,
+            2 => Domain.Gaia1001Forms.Enums.Flag.Fail,
             _ => throw new InvalidOperationException($"Invalid Flag value: {FormAction}")
         };
     }

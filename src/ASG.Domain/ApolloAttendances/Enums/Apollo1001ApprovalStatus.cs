@@ -1,4 +1,4 @@
-namespace ASG.Domain.ApolloAttendances;
+namespace ASG.Domain.ApolloAttendances.Enums;
 
 public enum Apollo1001ApprovalStatus
 {

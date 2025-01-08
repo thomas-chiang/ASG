@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ASG.Domain.ApolloAttendances;
+using ASG.Domain.ApolloAttendances.Enums;
 using ASG.Domain.Common;
+using ASG.Domain.Common.Enums;
 
-namespace ASG.Infrastructure.ApolloAttendences.DynamicDbSchemas;
+namespace ASG.Infrastructure.ApolloAttendances.AsiaTubeDbSchemas;
 
 [Table("AttendanceHistory", Schema = "pt")]
 public class AttendanceHistory

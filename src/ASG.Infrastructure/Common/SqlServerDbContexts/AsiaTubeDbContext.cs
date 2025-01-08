@@ -1,22 +1,22 @@
-using ASG.Infrastructure.ApolloAttendences.DynamicDbSchemas;
+using ASG.Infrastructure.ApolloAttendances.AsiaTubeDbSchemas;
 using Microsoft.EntityFrameworkCore;
 
 namespace ASG.Infrastructure.Common.SqlServerDbContexts;
 
-public class DynamicDbContext: DbContext
+public class AsiaTubeDbContext: DbContext
 {
     
     public DbSet<AttendanceHistory> AttendanceHistories { get; set; } = null!;
     
     public DbSet<AttendanceHistoryRecord> AttendanceHistoryRecords { get; set; } = null!;
     
-    public DynamicDbContext(string connectionString)
-        : base(new DbContextOptionsBuilder<DynamicDbContext>()
+    public AsiaTubeDbContext(string connectionString)
+        : base(new DbContextOptionsBuilder<AsiaTubeDbContext>()
             .UseSqlServer(connectionString)
             .Options)
     {
     }
-    public DynamicDbContext(DbContextOptions options) : base(options)
+    public AsiaTubeDbContext(DbContextOptions options) : base(options)
     {
     }
 }

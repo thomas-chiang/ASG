@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace ASG.Domain.ApolloSyncGaia1001FormOperation;
+namespace ASG.Domain.ApolloSyncGaia1001FormOperation.Enums;
 
 public enum Sync1001FormSituation
 {

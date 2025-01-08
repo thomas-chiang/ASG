@@ -3,6 +3,8 @@ using ASG.Application.ApolloSyncGaia1001FormOperations.Commands.CreateApolloSync
 using ASG.Contracts.ApolloSyncGaia1001FormOperation;
 using ASG.Contracts.Gaia1001Forms;
 using ASG.Domain.ApolloSyncGaia1001FormOperation;
+using ASG.Domain.ApolloSyncGaia1001FormOperation.Enums;
+using ASG.Domain.ApolloSyncGaia1001FormOperation.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

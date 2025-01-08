@@ -1,3 +1,5 @@
+using ASG.Domain.ApolloAttendances.Enums;
+
 namespace ASG.Domain.ApolloAttendances;
 
 public class Apollo1001Form

@@ -1,6 +1,6 @@
 using ASG.Domain.Common;
 
-namespace ASG.Domain.Gaia1001Forms;
+namespace ASG.Domain.Gaia1001Forms.RequestBodys;
 
 public record RecalledReCheckInFormRequestBody(
     int SourceFormNo,

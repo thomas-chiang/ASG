@@ -1,4 +1,4 @@
-using ASG.Infrastructure.Gaia1001Forms.AisaFlowDbSchemas;
+using ASG.Infrastructure.Common.AisaFlowDbSchemas;
 using ASG.Infrastructure.Gaia1001Forms.Views;
 using Microsoft.EntityFrameworkCore;
 

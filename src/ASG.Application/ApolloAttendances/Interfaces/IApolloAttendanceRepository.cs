@@ -1,5 +1,6 @@
 using ASG.Domain.ApolloAttendances;
 using ASG.Domain.Common;
+using ASG.Domain.Common.Enums;
 
 namespace ASG.Application.ApolloAttendances.Interfaces;
 

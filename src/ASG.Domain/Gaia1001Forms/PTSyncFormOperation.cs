@@ -1,4 +1,5 @@
 using ASG.Domain.Common;
+using ASG.Domain.Gaia1001Forms.Enums;
 
 namespace ASG.Domain.Gaia1001Forms;
 

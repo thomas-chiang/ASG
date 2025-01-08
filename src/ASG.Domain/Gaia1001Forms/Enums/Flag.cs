@@ -1,4 +1,4 @@
-namespace ASG.Domain.Gaia1001Forms;
+namespace ASG.Domain.Gaia1001Forms.Enums;
 
 public enum Flag
 {

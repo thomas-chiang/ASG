@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace ASG.Domain.Gaia1001Forms;
+namespace ASG.Domain.Gaia1001Forms.Enums;
 
 public enum Gaia1001FormStatus
 {

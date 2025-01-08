@@ -1,6 +1,7 @@
 using ASG.Application.Gaia1001Forms.Queries.GetGaia1001Form;
 using ASG.Contracts.Gaia1001Forms;
 using ASG.Domain.Gaia1001Forms;
+using ASG.Domain.Gaia1001Forms.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

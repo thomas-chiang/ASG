@@ -1,4 +1,5 @@
 using ASG.Domain.Common;
+using ASG.Domain.Common.Enums;
 
 namespace ASG.Domain.ApolloAttendances;
 

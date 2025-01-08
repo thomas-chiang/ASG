@@ -1,6 +1,6 @@
 using ASG.Domain.Common;
 
-namespace ASG.Domain.ApolloSyncGaia1001FormOperation;
+namespace ASG.Domain.ApolloSyncGaia1001FormOperation.Requests;
 
 public class ApproveReCheckInFormRequest : AnonymousRequest
 {

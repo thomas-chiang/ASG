@@ -1,5 +1,7 @@
 using ASG.Domain.Common;
+using ASG.Domain.Common.Enums;
 using ASG.Domain.Gaia1001Forms;
+using ASG.Domain.Gaia1001Forms.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ASG.Infrastructure.Gaia1001Forms.Views;
@@ -52,12 +54,12 @@ public class Gaia1001Attendance
     {
         return AttendanceType switch
         {
-            "0" => Domain.Common.AttendanceType.Unknown,
-            "1" => Domain.Common.AttendanceType.ClockIn,
-            "2" => Domain.Common.AttendanceType.ClockOut,
-            "4" => Domain.Common.AttendanceType.OutForBusiness,
-            "5" => Domain.Common.AttendanceType.BreakStart,
-            "6" => Domain.Common.AttendanceType.BreakEnd,
+            "0" => Domain.Common.Enums.AttendanceType.Unknown,
+            "1" => Domain.Common.Enums.AttendanceType.ClockIn,
+            "2" => Domain.Common.Enums.AttendanceType.ClockOut,
+            "4" => Domain.Common.Enums.AttendanceType.OutForBusiness,
+            "5" => Domain.Common.Enums.AttendanceType.BreakStart,
+            "6" => Domain.Common.Enums.AttendanceType.BreakEnd,
             _ => throw new InvalidOperationException($"Invalid form_status value: {AttendanceType}")
         };
     }
