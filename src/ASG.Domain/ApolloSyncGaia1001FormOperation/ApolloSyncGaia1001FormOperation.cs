@@ -2,6 +2,7 @@ using System.ComponentModel;
 using ASG.Domain.ApolloAttendances;
 using ASG.Domain.Common;
 using ASG.Domain.Gaia1001Forms;
+using ErrorOr;
 
 namespace ASG.Domain.ApolloSyncGaia1001FormOperation;
 
@@ -40,7 +41,7 @@ public class ApolloSyncGaia1001FormOperation
         }
     }
 
-    public void SetSituation()
+    public ErrorOr<Success> SetSituation()
     {
         if (HasOtherEffectiveAttendanceMethod())
         {
@@ -50,11 +51,16 @@ public class ApolloSyncGaia1001FormOperation
                 AttendanceType.ClockOut => Sync1001FormSituation.AlreadyHasClockOutRecord,
                 _ => Sync1001FormSituation.AlreadyHasOtherAttendanceTypeRecordOrIsStillApproving
             };
-            return;
+            return Result.Success;
         }
 
         if (UpdatedApolloAttendance == null)
-            throw new InvalidOperationException("Need to fetch again apollo attendance.");
+        {
+            return Error.Validation(
+                code: "ApolloAttendance.NotFetched",
+                description: "Need to fetch Apollo attendance again."
+            );
+        }
 
         if (UpdatedApolloAttendance.Apollo1001Forms.Any(form =>
                 form.FormKind == Gaia1001Form.FormKind &&
@@ -84,6 +90,7 @@ public class ApolloSyncGaia1001FormOperation
                     )
                 )
             )) Situation = Sync1001FormSituation.NormalFailSync;
+        return Result.Success;
     }
 
     private bool HasOtherEffectiveAttendanceMethod()
@@ -200,14 +207,4 @@ public class ApolloSyncGaia1001FormOperation
         var attribute = (DescriptionAttribute?)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
         return attribute == null ? status.ToString() : attribute.Description;
     }
-
-    // public ApolloAttendanceHistory? GetApolloEffectiveHistory()
-    // {
-    //     var isEffectiveHistories = ApolloAttendance.ApolloAttendanceHistories.Where(h => h.IsEffective).ToList();
-    //
-    //     if (isEffectiveHistories.Count > 1)
-    //         throw new InvalidOperationException("ApolloAttendanceHistories must only contain one effective item.");
-    //
-    //     return isEffectiveHistories.SingleOrDefault();
-    // }
 }

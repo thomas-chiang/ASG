@@ -65,7 +65,11 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
             apolloSyncGaia1001FormOperation.UpdatedApolloAttendance = updatedApolloAttendance;
         }
         
-        apolloSyncGaia1001FormOperation.SetSituation();
+        var operationResult = apolloSyncGaia1001FormOperation.SetSituation();
+        if (operationResult.IsError)
+        {
+            return operationResult.Errors;
+        }
 
         return apolloSyncGaia1001FormOperation;
     }

@@ -20,14 +20,8 @@ public static class DependencyInjection
         
         using (var connection = new SqlConnection(connectionString)) { connection.OpenAsync(); }
         
-        // services.AddDbContext<AsiaFlowDbContext>(options =>
-        //     options.UseSqlServer(connectionString));
-        
         services.AddDbContext<AsiaFlowDbContext>();
         services.AddDbContext<AsiaTubeManageDbContext>();
-
-        // services.AddDbContext<DynamicDbContext>(options =>
-        //     options.UseSqlServer(connectionString));
 
         services
             .AddScoped<IGaia1001FormRepository, Gaia1001FormRepository>()

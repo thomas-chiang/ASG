@@ -25,7 +25,7 @@ public class AsiaFlowDbContext: DbContext
             string connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
                                       + "Authentication=Active Directory Interactive; Encrypt=True; Database=AsiaFlowDB";
 
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(600));
         }
     }
 }
