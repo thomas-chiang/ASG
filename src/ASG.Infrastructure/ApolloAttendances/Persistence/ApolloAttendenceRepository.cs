@@ -17,7 +17,7 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
         _asiaTubeManageDbContext = asiaTubeManageDbContext;
     }
 
-    public async Task<ApolloAttendance?> GetApolloAttendance(
+    public async Task<ApolloAttendance> GetApolloAttendance(
         Guid companyId, 
         Guid userEmployeeId,
         DateOnly attendanceDate, 

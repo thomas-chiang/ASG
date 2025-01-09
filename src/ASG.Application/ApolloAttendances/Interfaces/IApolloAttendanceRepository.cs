@@ -6,7 +6,7 @@ namespace ASG.Application.ApolloAttendances.Interfaces;
 
 public interface IApolloAttendanceRepository
 {
-    Task<ApolloAttendance?> GetApolloAttendance(
+    Task<ApolloAttendance> GetApolloAttendance(
         Guid companyId,
         Guid userEmployeeId,
         DateOnly attendanceDate,

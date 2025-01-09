@@ -2,18 +2,17 @@ using System.ComponentModel;
 using ASG.Application.ApolloSyncGaia1001FormOperations.Commands.CreateApolloSyncAction;
 using ASG.Contracts.ApolloSyncGaia1001FormOperation;
 using ASG.Contracts.Gaia1001Forms;
-using ASG.Domain.ApolloSyncGaia1001FormOperation;
-using ASG.Domain.ApolloSyncGaia1001FormOperation.Enums;
-using ASG.Domain.ApolloSyncGaia1001FormOperation.Requests;
+using ASG.Domain.ApolloSyncGaia1001FormOperations.Enums;
+using ASG.Domain.ApolloSyncGaia1001FormOperations.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace ASG.Api.Controllers;
 
-[ApiController]
+
 [Route("[controller]")]
-public class ApolloSyncGaia1001FormOperationController : Controller
+public class ApolloSyncGaia1001FormOperationController : ApiController
 {
     private readonly ISender _mediator;
 
@@ -23,7 +22,7 @@ public class ApolloSyncGaia1001FormOperationController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(CreateApolloSyncGaia1001FormOperationResponse), 200)]
+    [ProducesResponseType(typeof(CreateApolloSyncGaia1001FormOperationResponse), 201)]
     [ProducesResponseType(500)]
     [Produces("application/json")]
     public async Task<IActionResult> CreateApolloSyncGaia1001FormOperation(
@@ -33,8 +32,8 @@ public class ApolloSyncGaia1001FormOperationController : Controller
         var result = await _mediator.Send(command);
 
 
-        return result.MatchFirst(
-            operation => Ok(new CreateApolloSyncGaia1001FormOperationResponse(
+        return result.Match(
+            operation => CreatedAtAction(null,new CreateApolloSyncGaia1001FormOperationResponse(
                 Gaia1001FormController.ToGetGaia1001FormResponse(operation.Gaia1001Form),
                 Gaia1001FormWithApolloAttendanceController.ToApolloAttendanceResponse(operation.ApolloAttendance),
                 new ApolloSyncGaia1001FormOperationResponse(
@@ -65,7 +64,7 @@ public class ApolloSyncGaia1001FormOperationController : Controller
                         .UpdatedApolloAttendance)
                     : null
             )),
-            error => Problem()
+            errors => Problem(errors)
         );
     }
     

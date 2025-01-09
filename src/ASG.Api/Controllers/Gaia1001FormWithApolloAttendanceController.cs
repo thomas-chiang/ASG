@@ -10,9 +10,9 @@ using Newtonsoft.Json;
 
 namespace ASG.Api.Controllers;
 
-[ApiController]
+
 [Route("[controller]")]
-public class Gaia1001FormWithApolloAttendanceController : ControllerBase
+public class Gaia1001FormWithApolloAttendanceController : ApiController
 {
     private readonly ISender _mediator;
 

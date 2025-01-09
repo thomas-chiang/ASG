@@ -1,6 +1,6 @@
 using ASG.Domain.Common;
 
-namespace ASG.Domain.ApolloSyncGaia1001FormOperation.Requests;
+namespace ASG.Domain.ApolloSyncGaia1001FormOperations.Requests;
 
 public class RecalledReCheckInFormRequest : AnonymousRequest
 {

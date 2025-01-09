@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using ASG.Domain.ApolloAttendances;
 using ASG.Domain.ApolloAttendances.Enums;
-using ASG.Domain.ApolloSyncGaia1001FormOperation.Enums;
-using ASG.Domain.ApolloSyncGaia1001FormOperation.Requests;
+using ASG.Domain.ApolloSyncGaia1001FormOperations.Enums;
+using ASG.Domain.ApolloSyncGaia1001FormOperations.Requests;
 using ASG.Domain.Common;
 using ASG.Domain.Common.Enums;
 using ASG.Domain.Gaia1001Forms;
@@ -10,7 +10,7 @@ using ASG.Domain.Gaia1001Forms.Enums;
 using ASG.Domain.Gaia1001Forms.RequestBodys;
 using ErrorOr;
 
-namespace ASG.Domain.ApolloSyncGaia1001FormOperation;
+namespace ASG.Domain.ApolloSyncGaia1001FormOperations;
 
 public class ApolloSyncGaia1001FormOperation
 {
@@ -61,12 +61,7 @@ public class ApolloSyncGaia1001FormOperation
         }
 
         if (UpdatedApolloAttendance == null)
-        {
-            return Error.Validation(
-                code: "ApolloAttendance.NotFetched",
-                description: "Need to fetch Apollo attendance again."
-            );
-        }
+            return ApolloSyncGaia1001FormOperationErrors.ApolloAttendanceNotFetchedAgain;
 
         if (UpdatedApolloAttendance.Apollo1001Forms.Any(form =>
                 form.FormKind == Gaia1001Form.FormKind &&
@@ -79,7 +74,8 @@ public class ApolloSyncGaia1001FormOperation
                     ||
                     (
                         form.ApprovalStatus == Apollo1001ApprovalStatus.Unknown
-                        && new HashSet<Gaia1001FormStatus> {
+                        && new HashSet<Gaia1001FormStatus>
+                        {
                             Gaia1001FormStatus.WaitingApprove,
                             Gaia1001FormStatus.UnderApproving
                         }.Contains(Gaia1001Form.FormStatus)
