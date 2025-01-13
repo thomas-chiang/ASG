@@ -1,4 +1,3 @@
-using ASG.Domain.ApolloAttendances;
 using ErrorOr;
 using MediatR;
 

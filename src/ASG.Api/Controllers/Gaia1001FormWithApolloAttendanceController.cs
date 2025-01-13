@@ -32,14 +32,14 @@ public class Gaia1001FormWithApolloAttendanceController : ApiController
 
         var getGaia1001FormWithApolloAttendanceQueryResult = await _mediator.Send(query);
 
-        return getGaia1001FormWithApolloAttendanceQueryResult.MatchFirst(
+        return getGaia1001FormWithApolloAttendanceQueryResult.Match(
             result => Ok(
                 new GetGaia1001FormWithApolloAttendanceResponse(
                     Gaia1001FormController.ToGetGaia1001FormResponse(result.Gaia1001Form),
                     ToApolloAttendanceResponse(result.ApolloAttendance)
                 )
             ),
-            error => Problem()
+            errors => Problem(errors)
         );
     }
 

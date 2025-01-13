@@ -29,9 +29,9 @@ public class Gaia1001FormController : ApiController
 
         var getGaia1001FormResult = await _mediator.Send(query);
 
-        return getGaia1001FormResult.MatchFirst(
+        return getGaia1001FormResult.Match(
             gaia1001Form => Ok(ToGetGaia1001FormResponse(gaia1001Form)),
-            error => Problem()
+            errors => Problem(errors)
         );
     }
     
