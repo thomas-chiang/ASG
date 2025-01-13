@@ -6,24 +6,22 @@ public class GetGaia1001FormQueryValidator : AbstractValidator<GetGaia1001FormQu
 {
     public GetGaia1001FormQueryValidator()
     {
-        RuleFor(getGaia1001FormQuery => getGaia1001FormQuery)
-            .ApplyFetchGaia1001FormRules();
+        RuleFor(getGaia1001FormQuery => getGaia1001FormQuery.FormKind)
+            .ApplyGetGaia1001FormKindRules();
+        RuleFor(getGaia1001FormQuery => getGaia1001FormQuery.FormNo)
+            .GreaterThan(0).WithMessage("FormNo must be a positive number.");
     }
 }
 
 public static class Gaia1001FormFluentValidationExtensions
 {
-    public static IRuleBuilderOptions<T, dynamic> ApplyFetchGaia1001FormRules<T>(
-        this IRuleBuilder<T, dynamic> ruleBuilder)
+    public static IRuleBuilderOptions<T, string> ApplyGetGaia1001FormKindRules<T>(
+        this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
-            .Must(anonymousObject => anonymousObject != null && anonymousObject?.FormKind != null)
-            .WithMessage("FormKind must not be null or empty.")
-            .Must(anonymousObject => anonymousObject.FormKind.Contains("1001"))
-            .WithMessage("FormKind must contain the string '1001'.")
-            .Must(anonymousObject => anonymousObject != null && anonymousObject?.FormNo != null)
-            .WithMessage("FormNo must not be null or empty.")
-            .Must(anonymousObject => anonymousObject.FormNo > 0)
-            .WithMessage("FormNo must be a positive number.");
+            .Must(formKind => formKind.Contains(".1001"))
+            .WithMessage("FormKind must contain the string '.1001'.")
+            .Must(formKind => formKind.Contains("9."))
+            .WithMessage("FormKind must contain the string '9.'.");
     }
 }

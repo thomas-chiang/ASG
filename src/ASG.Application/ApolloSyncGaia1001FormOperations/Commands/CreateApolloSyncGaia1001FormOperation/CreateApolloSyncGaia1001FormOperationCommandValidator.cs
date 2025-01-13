@@ -9,7 +9,9 @@ public class
 {
     public CreateApolloSyncGaia1001FormOperationCommandValidator()
     {
-        RuleFor(createApolloSyncGaia1001FormOperationCommand => createApolloSyncGaia1001FormOperationCommand)
-            .ApplyFetchGaia1001FormRules();
+        RuleFor(createApolloSyncGaia1001FormOperationCommand => createApolloSyncGaia1001FormOperationCommand.FormKind)
+            .ApplyGetGaia1001FormKindRules();
+        RuleFor(createApolloSyncGaia1001FormOperationCommand => createApolloSyncGaia1001FormOperationCommand.FormNo)
+            .GreaterThan(0).WithMessage("FormNo must be a positive number.");
     }
 }

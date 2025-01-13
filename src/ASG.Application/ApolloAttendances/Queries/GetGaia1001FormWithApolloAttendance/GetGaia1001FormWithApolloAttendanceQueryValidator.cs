@@ -8,7 +8,9 @@ public class
 {
     public GetGaia1001FormWithApolloAttendanceQueryValidator()
     {
-        RuleFor(getGaia1001FormWithApolloAttendanceQuery => getGaia1001FormWithApolloAttendanceQuery)
-            .ApplyFetchGaia1001FormRules();
+        RuleFor(getGaia1001FormWithApolloAttendanceQuery => getGaia1001FormWithApolloAttendanceQuery.FormKind)
+            .ApplyGetGaia1001FormKindRules();
+        RuleFor(getGaia1001FormWithApolloAttendanceQuery => getGaia1001FormWithApolloAttendanceQuery.FormNo)
+            .GreaterThan(0).WithMessage("FormNo must be a positive number.");
     }
 }
