@@ -16,13 +16,11 @@ public class PtSyncFormArchive2024
 
     public Guid UserEmployeeId { get; set; }
 
-    [MaxLength(100)]
-    public string FormKind { get; set; }
+    [MaxLength(100)] public string FormKind { get; set; }
 
     public int FormNo { get; set; }
 
-    [Column(TypeName = "nvarchar(max)")]
-    public string FormContent { get; set; }
+    [Column(TypeName = "nvarchar(max)")] public string FormContent { get; set; }
 
     public byte FormAction { get; set; }
 
@@ -33,7 +31,7 @@ public class PtSyncFormArchive2024
     public byte Flag { get; set; }
 
     public byte? RetryCount { get; set; }
-    
+
     public FormAction GetFormActionEnum()
     {
         return FormAction switch
@@ -44,7 +42,7 @@ public class PtSyncFormArchive2024
             _ => throw new InvalidOperationException($"Invalid FormAction value: {FormAction}")
         };
     }
-    
+
     public Flag GetFlagEnum()
     {
         return Flag switch

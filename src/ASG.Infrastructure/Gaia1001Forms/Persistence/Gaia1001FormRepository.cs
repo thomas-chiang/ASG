@@ -52,7 +52,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
                 ? new Guid(attendanceInfo.CheckInPersonalReasonTypeId)
                 : null,
             CheckInPersonalReason = attendanceInfo.CheckInPersonalReason,
-            IsApproved = attendanceInfo.IsApproved == 1,
+            IsApproved = attendanceInfo.IsApproved == 1
         };
 
         if (gaia1001Form.AttendanceOn.Year <= 2024)
@@ -174,7 +174,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
                 switch (operation.FormAction)
                 {
                     case FormAction.Apply:
-                        operation.FormActionJson=
+                        operation.FormActionJson =
                             JsonConvert.DeserializeObject<ApplyReCheckInFormRequestBody>(operation.FormContent);
                         break;
 

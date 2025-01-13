@@ -15,20 +15,23 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        string connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
-                                  + "Authentication=Active Directory Interactive; Encrypt=True";
-        
-        using (var connection = new SqlConnection(connectionString)) { connection.OpenAsync(); }
-        
+        var connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
+                               + "Authentication=Active Directory Interactive; Encrypt=True";
+
+        using (var connection = new SqlConnection(connectionString))
+        {
+            connection.OpenAsync();
+        }
+
         services.AddDbContext<AsiaFlowDbContext>();
         services.AddDbContext<AsiaTubeManageDbContext>();
 
         services
             .AddScoped<IGaia1001FormRepository, Gaia1001FormRepository>()
             .AddScoped<IApolloAttendanceRepository, ApolloAttendenceRepository>();
-            
+
         services.AddHttpClient<IAnonymousRequestSender, AnonymousRequestSender>();
-        
+
         return services;
     }
 }

@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 
 namespace ASG.Api.Controllers;
 
-
 [Route("[controller]")]
 public class Gaia1001FormController : ApiController
 {
@@ -34,7 +33,7 @@ public class Gaia1001FormController : ApiController
             errors => Problem(errors)
         );
     }
-    
+
     public static GetGaia1001FormResponse ToGetGaia1001FormResponse(Gaia1001Form gaia1001Form)
     {
         return new GetGaia1001FormResponse

@@ -10,5 +10,5 @@ public enum Flag
     /// <summary>
     /// 執行失敗
     /// </summary>
-    Fail,
+    Fail
 }

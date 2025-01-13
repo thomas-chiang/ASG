@@ -15,5 +15,5 @@ public enum FormAction
     /// <summary>
     /// 撤回
     /// </summary>
-    Recalled,
+    Recalled
 }

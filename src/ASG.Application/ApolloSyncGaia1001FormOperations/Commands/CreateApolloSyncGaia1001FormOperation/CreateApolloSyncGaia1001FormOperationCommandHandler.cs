@@ -5,7 +5,7 @@ using ASG.Domain.ApolloSyncGaia1001FormOperations;
 using ErrorOr;
 using MediatR;
 
-namespace ASG.Application.ApolloSyncGaia1001FormOperations.Commands.CreateApolloSyncAction;
+namespace ASG.Application.ApolloSyncGaia1001FormOperations.Commands.CreateApolloSyncGaia1001FormOperation;
 
 public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHandler<
     CreateApolloSyncGaia1001FormOperationCommand, ErrorOr<ApolloSyncGaia1001FormOperation>>

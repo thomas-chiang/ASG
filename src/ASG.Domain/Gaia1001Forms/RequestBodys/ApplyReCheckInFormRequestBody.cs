@@ -19,4 +19,4 @@ public record ApplyReCheckInFormRequestBody(
     string? CheckInPersonalReasonTypeId,
     string? CheckInPersonalReason,
     bool? IsApproved
-): RequestBody;
+) : RequestBody;

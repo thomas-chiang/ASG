@@ -9,4 +9,4 @@ public record ApolloSyncGaia1001FormRequest(
     ApproveReCheckInFormJsonResponse? ApproveReCheckInFormRequestBody,
     RecalledReCheckInFormJsonResponse? RecalledReCheckInFormRequestBody,
     string? Result
-    );
+);

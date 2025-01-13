@@ -10,4 +10,4 @@ public record ApproveReCheckInFormRequestBody(
     string EmployeeId,
     string UserEmployeeId,
     bool IsAgree
-): RequestBody;
+) : RequestBody;

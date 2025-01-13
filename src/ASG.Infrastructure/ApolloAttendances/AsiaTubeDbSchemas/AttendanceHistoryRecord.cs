@@ -8,8 +8,7 @@ namespace ASG.Infrastructure.ApolloAttendances.AsiaTubeDbSchemas;
 [Table("AttendanceHistoryRecord", Schema = "pt")]
 public class AttendanceHistoryRecord
 {
-    [Key] 
-    public Guid AttendanceHistoryRecordId { get; set; }
+    [Key] public Guid AttendanceHistoryRecordId { get; set; }
 
     public Guid EmployeeId { get; set; }
 
@@ -74,17 +73,18 @@ public class AttendanceHistoryRecord
     [MaxLength(10)] public string? AdjustCheckInPersonalReasonCode { get; set; }
 
     [MaxLength(500)] public string? AdjustCheckInPersonalReason { get; set; }
-    
+
     public Apollo1001ApprovalStatus GetApollo1001ApprovalStatusEnum()
     {
         return iApprovalResult switch
         {
-            0 => Apollo1001ApprovalStatus.Unknown,    // 簽核中
-            1 => Apollo1001ApprovalStatus.Ok,         // 同意
-            2 => Apollo1001ApprovalStatus.Deny,       // 不同意
-            3 => Apollo1001ApprovalStatus.Complete,   // 完成
-            99 => Apollo1001ApprovalStatus.Delete,    // 刪除作廢
-            _ => throw new ArgumentOutOfRangeException(nameof(iApprovalResult), iApprovalResult, "Invalid iApprovalResult value")
+            0 => Apollo1001ApprovalStatus.Unknown, // 簽核中
+            1 => Apollo1001ApprovalStatus.Ok, // 同意
+            2 => Apollo1001ApprovalStatus.Deny, // 不同意
+            3 => Apollo1001ApprovalStatus.Complete, // 完成
+            99 => Apollo1001ApprovalStatus.Delete, // 刪除作廢
+            _ => throw new ArgumentOutOfRangeException(nameof(iApprovalResult), iApprovalResult,
+                "Invalid iApprovalResult value")
         };
     }
 }

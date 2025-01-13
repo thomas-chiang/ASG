@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 
 namespace ASG.Api.Controllers;
 
-
 [Route("[controller]")]
 public class Gaia1001FormWithApolloAttendanceController : ApiController
 {

@@ -77,21 +77,21 @@ public class AttendanceHistory
                 throw new ArgumentOutOfRangeException(nameof(attendanceType), attendanceType, null);
         }
     }
-    
+
     public AttendanceMethod GetAttendanceMethodEnum()
     {
         return iOriginType switch
         {
-            0 => AttendanceMethod.Unknown,    // Unknown
-            1 => AttendanceMethod.TimeClock,  // TimeClock
-            2 => AttendanceMethod.App,        // App
-            3 => AttendanceMethod.Location,   // Location
-            4 => AttendanceMethod.Approval,   // Approval
-            5 => AttendanceMethod.Retroactive,// Retroactive
-            8 => AttendanceMethod.ClientIn,   // ClientIn
-            16 => AttendanceMethod.Web,       // Web
-            17 => AttendanceMethod.Tablet,    // Tablet
-            18 => AttendanceMethod.Correction,// Correction
+            0 => AttendanceMethod.Unknown, // Unknown
+            1 => AttendanceMethod.TimeClock, // TimeClock
+            2 => AttendanceMethod.App, // App
+            3 => AttendanceMethod.Location, // Location
+            4 => AttendanceMethod.Approval, // Approval
+            5 => AttendanceMethod.Retroactive, // Retroactive
+            8 => AttendanceMethod.ClientIn, // ClientIn
+            16 => AttendanceMethod.Web, // Web
+            17 => AttendanceMethod.Tablet, // Tablet
+            18 => AttendanceMethod.Correction, // Correction
             _ => throw new ArgumentOutOfRangeException(nameof(iOriginType), iOriginType, "Invalid iOriginType value")
         };
     }

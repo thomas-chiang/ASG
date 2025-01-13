@@ -18,30 +18,30 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
     }
 
     public async Task<ApolloAttendance> GetApolloAttendance(
-        Guid companyId, 
+        Guid companyId,
         Guid userEmployeeId,
-        DateOnly attendanceDate, 
+        DateOnly attendanceDate,
         AttendanceType attendanceType
     )
     {
         var connectionString = await _asiaTubeManageDbContext.GetCompanyDbConnectionString(companyId);
-        
+
         using (var context = new AsiaTubeDbContext(connectionString))
         {
             var attendanceHistories = await context.AttendanceHistories
-                .Where(history => history.CompanyId == companyId 
-                                  && history.EmployeeId == userEmployeeId 
-                                  && history.iAttendanceType == AttendanceHistory.GetAttendanceTypeValue(attendanceType) 
+                .Where(history => history.CompanyId == companyId
+                                  && history.EmployeeId == userEmployeeId
+                                  && history.iAttendanceType == AttendanceHistory.GetAttendanceTypeValue(attendanceType)
                                   && history.AttendanceDate.Date == attendanceDate.ToDateTime(new TimeOnly(0, 0)).Date)
                 .ToListAsync();
-           
+
             var attendanceHistoryRecords = await context.AttendanceHistoryRecords
-                .Where(record => record.CompanyId == companyId 
-                                 && record.EmployeeId == userEmployeeId 
-                                 && record.iAttendanceType == AttendanceHistory.GetAttendanceTypeValue(attendanceType) 
+                .Where(record => record.CompanyId == companyId
+                                 && record.EmployeeId == userEmployeeId
+                                 && record.iAttendanceType == AttendanceHistory.GetAttendanceTypeValue(attendanceType)
                                  && record.AttendanceDate.Date == attendanceDate.ToDateTime(new TimeOnly(0, 0)).Date)
                 .ToListAsync();
-            
+
             return new ApolloAttendance
             {
                 CompanyId = companyId,
@@ -49,9 +49,9 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
                 AttendanceDate = attendanceDate,
                 AttendanceType = attendanceType,
                 ApolloAttendanceHistories = attendanceHistories.Select(history => new ApolloAttendanceHistory
-                {   
+                {
                     AttendanceHistoryId = history.AttendanceHistoryId,
-                    AttendanceMethod = history.GetAttendanceMethodEnum(), 
+                    AttendanceMethod = history.GetAttendanceMethodEnum(),
                     AttendanceOn = history.AttendanceOn,
                     IsEffective = history.IsEffect
                 }).ToList(),

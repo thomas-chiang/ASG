@@ -17,4 +17,4 @@ public record ApplyReCheckInFormJsonResponse(
     string? CheckInTimeoutType,
     string? CheckInPersonalReasonTypeId,
     string? CheckInPersonalReason
-    );
+);

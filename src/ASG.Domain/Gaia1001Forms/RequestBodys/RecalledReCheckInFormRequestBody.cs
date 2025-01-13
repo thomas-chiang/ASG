@@ -8,4 +8,4 @@ public record RecalledReCheckInFormRequestBody(
     string CompanyId,
     string UserEmployeeId,
     bool IsCancel
-): RequestBody;
+) : RequestBody;
