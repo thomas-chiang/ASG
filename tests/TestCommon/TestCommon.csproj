@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ApolloSyncGaia1001FormOperations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\ASG.Domain\ASG.Domain.csproj" />
+    <ProjectReference Include="..\..\src\ASG.Application\ASG.Application.csproj" />
   </ItemGroup>
 
 </Project>
