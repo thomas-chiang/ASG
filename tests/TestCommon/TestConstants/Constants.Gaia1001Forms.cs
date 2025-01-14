@@ -6,7 +6,7 @@ public static partial class Constants
 {
     public static class Gaia1001Forms
     {
-        public const string DefaultFormKind = "9.1001";
+        public const string DefaultFormKind = "CompanyCode9.FORM.1001";
         
         public const int DefaultFormNo = 1;
         
