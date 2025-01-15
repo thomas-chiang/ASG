@@ -61,7 +61,7 @@ public class Gaia1001Attendance
             "4" => Domain.Common.Enums.AttendanceType.OutForBusiness,
             "5" => Domain.Common.Enums.AttendanceType.BreakStart,
             "6" => Domain.Common.Enums.AttendanceType.BreakEnd,
-            _ => throw new InvalidOperationException($"Invalid form_status value: {AttendanceType}")
+            _ => throw new InvalidOperationException($"Invalid AttendanceType value: {AttendanceType}")
         };
     }
 }

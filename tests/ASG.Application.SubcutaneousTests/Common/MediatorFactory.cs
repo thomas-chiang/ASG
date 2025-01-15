@@ -12,17 +12,17 @@ namespace ASG.Application.SubcutaneousTests.Common;
 
 public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLifetime
 {
-    private InMemoryTestDatabase _testDatabase = null!;
+    private SqlServerTestDatabase _testDatabase = null!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        _testDatabase = InMemoryTestDatabase.CreateAndInitialize();
+        _testDatabase = SqlServerTestDatabase.CreateAndInitialize();
 
         builder.ConfigureTestServices(services =>
         {
             services
                 .RemoveAll<DbContextOptions<AsiaFlowDbContext>>()
-                .AddDbContext<AsiaFlowDbContext>((sp, options) => options.UseInMemoryDatabase(_testDatabase.InMemoryDatabaseName));
+                .AddDbContext<AsiaFlowDbContext>((sp, options) => options.UseSqlServer(_testDatabase.Connection));
         });
     }
 

@@ -1,3 +1,4 @@
+using ASG.Domain.Common.Enums;
 using ASG.Domain.Gaia1001Forms.Enums;
 
 namespace TestCommon.TestConstants;
@@ -12,7 +13,8 @@ public static partial class Constants
         
         public const Gaia1001FormStatus DefaultGaia1001FormStatus = Gaia1001FormStatus.Approved;
         
-        
-        
+        public static readonly Guid DefaultLocationId = new("00000000-0000-0000-0000-000000000001");
+
+        public const AttendanceType DefaultAttendanceType = AttendanceType.ClockIn;
     }
 }
