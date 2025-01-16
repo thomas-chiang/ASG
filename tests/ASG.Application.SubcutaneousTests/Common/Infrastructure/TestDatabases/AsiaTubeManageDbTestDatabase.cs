@@ -12,7 +12,8 @@ public class AsiaTubeManageDbTestDatabase : IDisposable
 
     public static AsiaTubeManageDbTestDatabase CreateAndInitialize()
     {
-        var testDatabase = new AsiaTubeManageDbTestDatabase("Server=localhost,1433;User=sa;Password=YourStrong@Password;Database=AsiaTubeManageDbTestDatabase;Encrypt=False;");
+        var testDatabase = new AsiaTubeManageDbTestDatabase(
+            "Server=localhost,1433;User=sa;Password=YourStrong@Password;Database=AsiaTubeManageDbTestDatabase;Encrypt=False;");
 
         testDatabase.InitializeDatabase();
 
@@ -56,7 +57,7 @@ public class AsiaTubeManageDbTestDatabase : IDisposable
         DropAllTables();
         Connection.Close();
     }
-    
+
     private void DropAllTables()
     {
         var options = new DbContextOptionsBuilder<AsiaTubeManageDbContext>()
@@ -64,7 +65,7 @@ public class AsiaTubeManageDbTestDatabase : IDisposable
             .Options;
 
         using var context = new AsiaTubeManageDbContext(options);
-    
+
         // Query all tables in the database and drop them
         var dropTablesSql = @"
         DECLARE @sql NVARCHAR(MAX) = N'';

@@ -4,7 +4,7 @@ using Moq;
 
 namespace ASG.Application.SubcutaneousTests.Common.Infrastructure.Common.SqlServerDbContexts;
 
-public class MockAsiaTubeManageDbContext 
+public class MockAsiaTubeManageDbContext
 {
     public static Mock<AsiaTubeManageDbContext> CreateMock()
     {
@@ -16,7 +16,8 @@ public class MockAsiaTubeManageDbContext
             .Setup(db => db.GetCompanyDbConnectionString(It.IsAny<Guid>()))
             .ReturnsAsync((Guid companyId) =>
             {
-                return "Server=localhost,1433;User=sa;Password=YourStrong@Password;Database=AsiaTubeDbTestDatabase;Encrypt=False;";
+                return
+                    "Server=localhost,1433;User=sa;Password=YourStrong@Password;Database=AsiaTubeDbTestDatabase;Encrypt=False;";
             });
 
         return mockDbContext;

@@ -12,18 +12,42 @@ namespace ASG.Application.SubcutaneousTests.ApolloSyncGaia1001FormOperations.Com
 public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediatorFactory)
 {
     private readonly IMediator _mediator = mediatorFactory.CreateMediator();
-    
+
     [Fact]
-    public async Task CreateApolloSyncGaia1001FormOperation_WhenValidCommand_ShouldCreateApolloSyncGaia1001FormOperation()
+    public async Task
+        CreateApolloSyncGaia1001FormOperation_WhenValidCommand_ShouldCreateApolloSyncGaia1001FormOperation()
     {
         // Arrange
-        var createApolloSyncGaia1001FormOperationCommand = ApolloSyncGaia1001FormOperationCommandFactory.CreateCreateApolloSyncGaia1001FormOperationCommand();
-        
+        var createApolloSyncGaia1001FormOperationCommand = ApolloSyncGaia1001FormOperationCommandFactory
+            .CreateCreateApolloSyncGaia1001FormOperationCommand();
+
         // Act
-        var createApolloSyncGaia1001FormOperationResult = await _mediator.Send(createApolloSyncGaia1001FormOperationCommand);
-        
+        var createApolloSyncGaia1001FormOperationResult =
+            await _mediator.Send(createApolloSyncGaia1001FormOperationCommand);
+
         // Assert
         createApolloSyncGaia1001FormOperationResult.IsError.Should().BeFalse();
-        // createApolloSyncGaia1001FormOperationResult.Value.UpdatedApolloAttendance.Should().BeNull();
+        createApolloSyncGaia1001FormOperationResult.Value.Situation.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData("1001")]
+    [InlineData("9.001")]
+    [InlineData("001")]
+    public async Task
+        CreateApolloSyncGaia1001FormOperation_WhenCommandContainsInvalidFormKind_ShouldReturnValidationError(
+            string formKind)
+    {
+        // Arrange
+        var createApolloSyncGaia1001FormOperationCommand = ApolloSyncGaia1001FormOperationCommandFactory
+            .CreateCreateApolloSyncGaia1001FormOperationCommand(formKind);
+
+        // Act
+        var createApolloSyncGaia1001FormOperationResult =
+            await _mediator.Send(createApolloSyncGaia1001FormOperationCommand);
+
+        // Assert
+        createApolloSyncGaia1001FormOperationResult.IsError.Should().BeTrue();
+        createApolloSyncGaia1001FormOperationResult.FirstError.Code.Should().Be("FormKind");
     }
 }

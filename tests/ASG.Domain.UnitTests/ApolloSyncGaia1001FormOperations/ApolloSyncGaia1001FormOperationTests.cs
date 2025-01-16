@@ -10,8 +10,9 @@ public class ApolloSyncGaia1001FormOperationTests
     public void SetSituationWhenNoOtherEffectiveAttendanceMethodAndNoUpdatedApolloAttendance_ShouldFail()
     {
         // Arrange
-        var apolloSyncGaia1001FormOperation = ApolloSyncGaia1001FormOperationFactory.CreateApolloSyncGaia1001FormOperation();
-        
+        var apolloSyncGaia1001FormOperation =
+            ApolloSyncGaia1001FormOperationFactory.CreateApolloSyncGaia1001FormOperation();
+
         // Act
         var setSituationResult = apolloSyncGaia1001FormOperation.SetSituation();
 

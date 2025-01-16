@@ -1,10 +1,8 @@
-using ASG.Api;
 using ASG.Application.Common.Interfaces;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.Common;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.Common.SqlServerDbContexts;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
-using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -12,14 +10,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace ASG.Application.SubcutaneousTests.Common;
+namespace ASG.Api.IntegrationTests.Common;
 
-public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLifetime
+public class AsgApiFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLifetime
 {
     private AsiaFlowDbTestDatabase _asiaFlowDbTestDatabase = null!;
     private AsiaTubeManageDbTestDatabase _asiaTubeManageDbTestDatabase = null!;
     private AsiaTubeDbTestDatabase _asiaTubeDbTestDatabase = null!;
 
+    public HttpClient HttpClient { get; private set; } = null!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -46,22 +45,13 @@ public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLif
         });
     }
 
-    public IMediator CreateMediator()
-    {
-        var serviceScope = Services.CreateScope();
-
-        _asiaFlowDbTestDatabase.ResetDatabase();
-        _asiaTubeManageDbTestDatabase.ResetDatabase();
-        _asiaTubeDbTestDatabase.ResetDatabase();
-
-        return serviceScope.ServiceProvider.GetRequiredService<IMediator>();
-    }
-
-
     public Task InitializeAsync()
     {
+        HttpClient = CreateClient();
+
         return Task.CompletedTask;
     }
+
 
     public new Task DisposeAsync()
     {
@@ -70,5 +60,12 @@ public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLif
         _asiaTubeDbTestDatabase.Dispose();
 
         return Task.CompletedTask;
+    }
+
+    public void ResetDatabase()
+    {
+        _asiaFlowDbTestDatabase.ResetDatabase();
+        _asiaTubeManageDbTestDatabase.ResetDatabase();
+        _asiaTubeDbTestDatabase.ResetDatabase();
     }
 }

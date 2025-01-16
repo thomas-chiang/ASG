@@ -8,7 +8,9 @@ using NSubstitute;
 using TestCommon.ApolloSyncGaia1001FormOperations;
 
 // Aliases for long type names
-using ReqType = ASG.Application.ApolloSyncGaia1001FormOperations.Commands.CreateApolloSyncGaia1001FormOperation.CreateApolloSyncGaia1001FormOperationCommand;
+using ReqType =
+    ASG.Application.ApolloSyncGaia1001FormOperations.Commands.CreateApolloSyncGaia1001FormOperation.
+    CreateApolloSyncGaia1001FormOperationCommand;
 using ResType = ASG.Domain.ApolloSyncGaia1001FormOperations.ApolloSyncGaia1001FormOperation;
 
 namespace ASG.Application.UnitTests.Common.Behaviors;
@@ -35,7 +37,8 @@ public class ValidationBehaviorTests
     public async Task InvokeBehavior_WhenValidatorResultIsValid_ShouldInvokeNextBehavior()
     {
         // Arrange
-        var request = ApolloSyncGaia1001FormOperationCommandFactory.CreateCreateApolloSyncGaia1001FormOperationCommand();
+        var request = ApolloSyncGaia1001FormOperationCommandFactory
+            .CreateCreateApolloSyncGaia1001FormOperationCommand();
         var response = ApolloSyncGaia1001FormOperationFactory.CreateApolloSyncGaia1001FormOperation();
 
         _mockValidator
@@ -52,13 +55,14 @@ public class ValidationBehaviorTests
         result.IsError.Should().BeFalse();
         result.Value.Should().BeEquivalentTo(response);
     }
-    
+
     [Fact]
     public async Task InvokeBehavior_WhenValidatorResultIsNotValid_ShouldReturnListOfErrors()
     {
         // Arrange
-        var request = ApolloSyncGaia1001FormOperationCommandFactory.CreateCreateApolloSyncGaia1001FormOperationCommand();
-        List<ValidationFailure> validationFailures = [new(propertyName: "foo", errorMessage: "bad foo")];
+        var request = ApolloSyncGaia1001FormOperationCommandFactory
+            .CreateCreateApolloSyncGaia1001FormOperationCommand();
+        List<ValidationFailure> validationFailures = [new("foo", "bad foo")];
 
         _mockValidator
             .ValidateAsync(request, Arg.Any<CancellationToken>())

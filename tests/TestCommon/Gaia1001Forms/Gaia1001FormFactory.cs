@@ -5,7 +5,6 @@ using TestCommon.TestConstants;
 
 namespace TestCommon.Gaia1001Forms;
 
-
 public class Gaia1001FormFactory
 {
     public static Gaia1001Form CreateGaia1001Form(

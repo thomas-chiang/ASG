@@ -11,12 +11,12 @@ public class ApolloSyncGaia1001FormOperationFactory
     public static ApolloSyncGaia1001FormOperation CreateApolloSyncGaia1001FormOperation(
         Gaia1001Form? gaia1001Form = null,
         ApolloAttendance? apolloAttendance = null
-        )
+    )
     {
         return new ApolloSyncGaia1001FormOperation
         {
             Gaia1001Form = gaia1001Form ?? Gaia1001FormFactory.CreateGaia1001Form(),
-            ApolloAttendance = apolloAttendance ?? ApolloAttendanceFactory.CreateApolloAttendance(),
-        }; 
+            ApolloAttendance = apolloAttendance ?? ApolloAttendanceFactory.CreateApolloAttendance()
+        };
     }
 }

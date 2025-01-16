@@ -28,13 +28,12 @@ public class AsiaFlowDbContext : DbContext
             optionsBuilder.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(600));
         }
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         // for subcutaneous test to not create Gaia1001Attendance table
         modelBuilder.Entity<Gaia1001Attendance>().ToView("Gaia1001AttendanceView");
-        
     }
 }

@@ -16,7 +16,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddTransient<IDbAccessor, DbAccessor>();
-        
+
         services.AddDbContext<AsiaFlowDbContext>();
         services.AddDbContext<AsiaTubeManageDbContext>();
 
