@@ -23,7 +23,7 @@ public class AsiaTubeManageDbContext : DbContext
         }
     }
 
-    public async Task<string> GetCompanyDbConnectionString(Guid companyId)
+    public virtual async Task<string> GetCompanyDbConnectionString(Guid companyId)
     {
         var companyCode = await Companies
             .Where(c => c.CompanyId == companyId)

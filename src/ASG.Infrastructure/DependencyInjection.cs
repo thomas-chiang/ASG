@@ -15,14 +15,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        var connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
-                               + "Authentication=Active Directory Interactive; Encrypt=True";
-
-        using (var connection = new SqlConnection(connectionString))
-        {
-            connection.OpenAsync();
-        }
-
+        services.AddTransient<IDbAccessor, DbAccessor>();
+        
         services.AddDbContext<AsiaFlowDbContext>();
         services.AddDbContext<AsiaTubeManageDbContext>();
 

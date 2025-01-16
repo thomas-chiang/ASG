@@ -11,9 +11,9 @@ public class Company
     [Required]
     [MaxLength(400)]
     [Column(TypeName = "nvarchar")]
-    public string CompanyCode { get; set; }
+    public required string CompanyCode { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(max)")]
-    public string CompanyName { get; set; }
+    public required string CompanyName { get; set; }
 }

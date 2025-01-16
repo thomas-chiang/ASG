@@ -1,23 +1,22 @@
-using System.Reflection.Metadata;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TestCommon.TestConstants;
 
-namespace ASG.Application.SubcutaneousTests.Common;
+namespace ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 
 
 /// <summary>
 /// In Subcutaneous tests we aren't testing integration with a real database,
 /// so even if we weren't using sql server of docker we would use some in-memory database.
 /// </summary>
-public class SqlServerTestDatabase : IDisposable
+public class AsiaFlowDbTestDatabase : IDisposable
 {
     public SqlConnection Connection { get; }
 
-    public static SqlServerTestDatabase CreateAndInitialize()
+    public static AsiaFlowDbTestDatabase CreateAndInitialize()
     {
-        var testDatabase = new SqlServerTestDatabase("Server=localhost,1433;User=sa;Password=YourStrong@Password;Database=TestDb;Encrypt=False;");
+        var testDatabase = new AsiaFlowDbTestDatabase("Server=localhost,1433;User=sa;Password=YourStrong@Password;Database=AsiaFlowDbTestDatabase;Encrypt=False;");
 
         testDatabase.InitializeDatabase();
 
@@ -49,7 +48,7 @@ public class SqlServerTestDatabase : IDisposable
             );
            ");
 
-        // Insert fake data into gbpm.fm_form_header
+        // Insert fake data
         context.Database.ExecuteSqlRaw(@"
                 INSERT INTO gbpm.fm_form_header (form_kind, form_no, form_status, form_date)
                 VALUES 
@@ -57,7 +56,7 @@ public class SqlServerTestDatabase : IDisposable
             ", 
             new SqlParameter("@FormKind", Constants.Gaia1001Forms.DefaultFormKind), 
             new SqlParameter("@FormNo", Constants.Gaia1001Forms.DefaultFormNo));
-
+        
         // Drop the tables if they already exist and recreate them
         context.Database.ExecuteSqlRaw($@"
                 IF OBJECT_ID('gbpm.{Constants.Gaia1001Forms.DefaultFormKind.Replace(".", "")}', 'U') IS NOT NULL
@@ -85,7 +84,7 @@ public class SqlServerTestDatabase : IDisposable
                 );
             ");
         
-        // Insert fake data into gbpm.fm_form_header
+        // Insert fake data 
         context.Database.ExecuteSqlRaw($@"
                 INSERT INTO gbpm.{Constants.Gaia1001Forms.DefaultFormKind.Replace(".", "")} (
                     form_no, ATTENDANCETYPE, DATETIME, TIMEZONE, NAME, LOCATION, LOCATIONINFO, REASON, 
@@ -105,16 +104,39 @@ public class SqlServerTestDatabase : IDisposable
     public void ResetDatabase()
     {
         Connection.Close();
+        DropAllTables();
         InitializeDatabase();
     }
 
-    private SqlServerTestDatabase(string connectionString)
+    private AsiaFlowDbTestDatabase(string connectionString)
     {
         Connection = new SqlConnection(connectionString);
     }
 
     public void Dispose()
     {
+        DropAllTables();
         Connection.Close();
+    }
+    
+    private void DropAllTables()
+    {
+        var options = new DbContextOptionsBuilder<AsiaFlowDbContext>()
+            .UseSqlServer(Connection)
+            .Options;
+
+        using var context = new AsiaFlowDbContext(options);
+    
+        // Query all tables in the database and drop them
+        var dropTablesSql = @"
+        DECLARE @sql NVARCHAR(MAX) = N'';
+        
+        SELECT @sql += 'DROP TABLE [' + SCHEMA_NAME(schema_id) + '].[' + name + ']; '
+        FROM sys.tables;
+
+        EXEC sp_executesql @sql;
+    ";
+
+        context.Database.ExecuteSqlRaw(dropTablesSql);
     }
 }

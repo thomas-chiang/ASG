@@ -1,4 +1,5 @@
 using ASG.Application;
+using ASG.Application.Common.Interfaces;
 using ASG.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 {
     // app.UseExceptionHandler(); // must first used builder.Services.AddProblemDetails();
+    
+    var dbAccessor = app.Services.GetRequiredService<IDbAccessor>();
+    await dbAccessor.GainAccess();
 
     if (app.Environment.IsDevelopment())
     {
