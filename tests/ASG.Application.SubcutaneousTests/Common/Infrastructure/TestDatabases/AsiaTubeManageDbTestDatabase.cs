@@ -6,10 +6,8 @@ using TestCommon.TestConstants;
 
 namespace ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 
-public class AsiaTubeManageDbTestDatabase : IDisposable
+public class AsiaTubeManageDbTestDatabase : SqlServerDbTestDatabase<AsiaTubeManageDbContext>
 {
-    public SqlConnection Connection { get; }
-
     public static AsiaTubeManageDbTestDatabase CreateAndInitialize()
     {
         var testDatabase = new AsiaTubeManageDbTestDatabase(
@@ -20,62 +18,17 @@ public class AsiaTubeManageDbTestDatabase : IDisposable
         return testDatabase;
     }
 
-    public void InitializeDatabase()
+    private AsiaTubeManageDbTestDatabase(string connectionString) : base(connectionString) { }
+
+    public override void InitializeDatabase()
     {
-        var options = new DbContextOptionsBuilder<AsiaTubeManageDbContext>()
-            .UseSqlServer(Connection)
-            .Options;
-
-        using var context = new AsiaTubeManageDbContext(options);
-        context.Database.EnsureCreated();
-        if (context.Companies.Any(c => c.CompanyId == Constants.Common.DefaultCompanyId)) return;
-        var newCompany = new Company
-        {
-            CompanyId = Constants.Common.DefaultCompanyId,
-            CompanyCode = "DefaultCompanyCode",
-            CompanyName = "DefaultCompanyName"
-        };
-
-        context.Companies.Add(newCompany);
-        context.SaveChanges();
-    }
-
-    public void ResetDatabase()
-    {
-        Connection.Close();
-        DropAllTables();
-        InitializeDatabase();
-    }
-
-    private AsiaTubeManageDbTestDatabase(string connectionString)
-    {
-        Connection = new SqlConnection(connectionString);
-    }
-
-    public void Dispose()
-    {
-        DropAllTables();
-        Connection.Close();
-    }
-
-    private void DropAllTables()
-    {
-        var options = new DbContextOptionsBuilder<AsiaTubeManageDbContext>()
-            .UseSqlServer(Connection)
-            .Options;
-
-        using var context = new AsiaTubeManageDbContext(options);
-
-        // Query all tables in the database and drop them
-        var dropTablesSql = @"
-        DECLARE @sql NVARCHAR(MAX) = N'';
-        
-        SELECT @sql += 'DROP TABLE [' + SCHEMA_NAME(schema_id) + '].[' + name + ']; '
-        FROM sys.tables;
-
-        EXEC sp_executesql @sql;
-    ";
-
-        context.Database.ExecuteSqlRaw(dropTablesSql);
+        base.InitializeDatabase();
+        Context.Database.ExecuteSqlRaw(@"
+            INSERT INTO [Company] (CompanyId, CompanyCode, CompanyName)
+            VALUES (@CompanyId, @CompanyCode, @CompanyName)",
+            new SqlParameter("@CompanyId", Constants.Common.DefaultCompanyId),
+            new SqlParameter("@CompanyCode", "DefaultCompanyCode"),
+            new SqlParameter("@CompanyName", "DefaultCompanyName")
+        );
     }
 }
