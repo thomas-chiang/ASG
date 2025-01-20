@@ -13,14 +13,20 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
     private readonly IApolloAttendanceRepository _apolloAttendanceRepository;
     private readonly IGaia1001FormRepository _gaia1001FormRepository;
     private readonly IAnonymousRequestSender _anonymousRequestSender;
+    private readonly IAsiaTubeDbSetter _asiaTubeDbSetter;
 
 
-    public CreateApolloSyncGaia1001FormOperationCommandHandler(IApolloAttendanceRepository apolloAttendanceRepository,
-        IGaia1001FormRepository gaia1001FormRepository, IAnonymousRequestSender anonymousRequestSender)
+    public CreateApolloSyncGaia1001FormOperationCommandHandler(
+        IApolloAttendanceRepository apolloAttendanceRepository,
+        IGaia1001FormRepository gaia1001FormRepository, 
+        IAnonymousRequestSender anonymousRequestSender,
+        IAsiaTubeDbSetter asiaTubeDbSetter
+        )
     {
         _apolloAttendanceRepository = apolloAttendanceRepository;
         _gaia1001FormRepository = gaia1001FormRepository;
         _anonymousRequestSender = anonymousRequestSender;
+        _asiaTubeDbSetter = asiaTubeDbSetter;
     }
 
     public async Task<ErrorOr<ApolloSyncGaia1001FormOperation>> Handle(
@@ -32,7 +38,8 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
             return Error.NotFound(
                 description:
                 $"Gaia1001 form with FormKind '{command.FormKind}' and FormNo '{command.FormNo}' not found.");
-
+        
+        await _asiaTubeDbSetter.SetAsiaTubeDb(gaia1001Form.CompanyId);
 
         var apolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(
             gaia1001Form.CompanyId,

@@ -1,4 +1,5 @@
 using ASG.Application.ApolloAttendances.Interfaces;
+using ASG.Application.Common.Interfaces;
 using ASG.Application.Gaia1001Forms.Interfaces;
 using ASG.Domain.ApolloAttendances;
 using ErrorOr;
@@ -11,12 +12,17 @@ public class GetGaia1001FormWithApolloAttendanceQueryHandler : IRequestHandler<G
 {
     private readonly IApolloAttendanceRepository _apolloAttendanceRepository;
     private readonly IGaia1001FormRepository _gaia1001FormRepository;
+    private readonly IAsiaTubeDbSetter _asiaTubeDbSetter;
 
-    public GetGaia1001FormWithApolloAttendanceQueryHandler(IGaia1001FormRepository gaia1001FormRepository,
-        IApolloAttendanceRepository apolloAttendanceRepository)
+    public GetGaia1001FormWithApolloAttendanceQueryHandler(
+        IGaia1001FormRepository gaia1001FormRepository,
+        IApolloAttendanceRepository apolloAttendanceRepository,
+        IAsiaTubeDbSetter asiaTubeDbSetter
+    )
     {
         _gaia1001FormRepository = gaia1001FormRepository;
         _apolloAttendanceRepository = apolloAttendanceRepository;
+        _asiaTubeDbSetter = asiaTubeDbSetter;
     }
 
     public async Task<ErrorOr<GetGaia1001FormWithApolloAttendanceQueryResult>> Handle(
@@ -28,6 +34,8 @@ public class GetGaia1001FormWithApolloAttendanceQueryHandler : IRequestHandler<G
         if (gaia1001Form == null)
             throw new InvalidOperationException(
                 $"Gaia1001 form with FormKind '{query.FormKind}' and FormNo '{query.FormNo}' not found.");
+
+        await _asiaTubeDbSetter.SetAsiaTubeDb(gaia1001Form.CompanyId);
 
         var apolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(
             gaia1001Form.CompanyId,

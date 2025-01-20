@@ -1,7 +1,6 @@
 using ASG.Api;
 using ASG.Application.Common.Interfaces;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.Common;
-using ASG.Application.SubcutaneousTests.Common.Infrastructure.Common.SqlServerDbContexts;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
 using MediatR;
@@ -32,11 +31,9 @@ public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLif
                 .RemoveAll<AsiaFlowDbContext>()
                 .AddDbContext<AsiaFlowDbContext>((sp, options) =>
                     options.UseSqlServer(AsiaFlowDbTestDatabase.Connection))
-                .RemoveAll<DbContextOptions<AsiaTubeManageDbContext>>()
+                .RemoveAll<AsiaTubeManageDbContext>()
                 .AddDbContext<AsiaTubeManageDbContext>((sp, options) =>
                     options.UseSqlServer(AsiaTubeManageDbTestDatabase.Connection))
-                .RemoveAll<AsiaTubeManageDbContext>()
-                .AddTransient(serviceProvider => MockAsiaTubeManageDbContext.CreateMock().Object)
                 .RemoveAll<AsiaTubeDbContext>()
                 .AddDbContext<AsiaTubeDbContext>((sp, options) =>
                     options.UseSqlServer(AsiaTubeDbTestDatabase.Connection))
@@ -44,6 +41,8 @@ public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLif
                 .AddTransient<IAnonymousRequestSender, MockAnonymousRequestSender>()
                 .RemoveAll<IDbAccessor>()
                 .AddTransient<IDbAccessor, MockDbAccessor>()
+                .RemoveAll<IAsiaTubeDbSetter>()
+                .AddTransient<IAsiaTubeDbSetter, MockAsiaTubeDbSetter>()
                 ;
         });
     }

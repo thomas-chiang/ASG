@@ -22,31 +22,4 @@ public class AsiaTubeManageDbContext : DbContext
             optionsBuilder.UseSqlServer(connectionString);
         }
     }
-
-    public virtual async Task<string> GetCompanyDbConnectionString(Guid companyId)
-    {
-        var companyCode = await Companies
-            .Where(c => c.CompanyId == companyId)
-            .Select(c => c.CompanyCode)
-            .FirstOrDefaultAsync();
-        if (string.IsNullOrEmpty(companyCode))
-            throw new InvalidOperationException($"Company with ID {companyId} not found.");
-
-        var connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
-                               + $"Authentication=Active Directory Interactive; Encrypt=True; Database=AsiaTube{companyCode}";
-        try
-        {
-            using (var comConnection = new SqlConnection(connectionString))
-            {
-                await comConnection.OpenAsync();
-            }
-        }
-        catch
-        {
-            connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
-                               + "Authentication=Active Directory Interactive; Encrypt=True; Database=AsiaTubeDB";
-        }
-
-        return connectionString;
-    }
 }

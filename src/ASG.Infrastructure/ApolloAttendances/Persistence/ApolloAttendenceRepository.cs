@@ -27,9 +27,6 @@ public class ApolloAttendenceRepository : IApolloAttendanceRepository
         AttendanceType attendanceType
     )
     {
-        var connectionString = await _asiaTubeManageDbContext.GetCompanyDbConnectionString(companyId);
-        _asiaTubeDbContext.Database.SetConnectionString(connectionString);
-
         var attendanceHistories = await _asiaTubeDbContext.AttendanceHistories
             .Where(history => history.CompanyId == companyId
                               && history.EmployeeId == userEmployeeId

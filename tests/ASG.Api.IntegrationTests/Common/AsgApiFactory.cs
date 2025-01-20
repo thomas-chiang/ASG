@@ -1,6 +1,5 @@
 using ASG.Application.Common.Interfaces;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.Common;
-using ASG.Application.SubcutaneousTests.Common.Infrastructure.Common.SqlServerDbContexts;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
 using Microsoft.AspNetCore.Hosting;
@@ -29,18 +28,21 @@ public class AsgApiFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLifet
         builder.ConfigureTestServices(services =>
         {
             services
-                .RemoveAll<DbContextOptions<AsiaFlowDbContext>>()
+                .RemoveAll<AsiaFlowDbContext>()
                 .AddDbContext<AsiaFlowDbContext>((sp, options) =>
                     options.UseSqlServer(AsiaFlowDbTestDatabase.Connection))
-                .RemoveAll<DbContextOptions<AsiaTubeManageDbContext>>()
+                .RemoveAll<AsiaTubeManageDbContext>()
                 .AddDbContext<AsiaTubeManageDbContext>((sp, options) =>
                     options.UseSqlServer(AsiaTubeManageDbTestDatabase.Connection))
-                .RemoveAll<AsiaTubeManageDbContext>()
-                .AddTransient(serviceProvider => MockAsiaTubeManageDbContext.CreateMock().Object)
+                .RemoveAll<AsiaTubeDbContext>()
+                .AddDbContext<AsiaTubeDbContext>((sp, options) =>
+                    options.UseSqlServer(AsiaTubeDbTestDatabase.Connection))
                 .RemoveAll<IAnonymousRequestSender>()
                 .AddTransient<IAnonymousRequestSender, MockAnonymousRequestSender>()
                 .RemoveAll<IDbAccessor>()
                 .AddTransient<IDbAccessor, MockDbAccessor>()
+                .RemoveAll<IAsiaTubeDbSetter>()
+                .AddTransient<IAsiaTubeDbSetter, MockAsiaTubeDbSetter>()
                 ;
         });
     }
