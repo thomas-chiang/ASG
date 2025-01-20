@@ -18,10 +18,10 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
 
     public CreateApolloSyncGaia1001FormOperationCommandHandler(
         IApolloAttendanceRepository apolloAttendanceRepository,
-        IGaia1001FormRepository gaia1001FormRepository, 
+        IGaia1001FormRepository gaia1001FormRepository,
         IAnonymousRequestSender anonymousRequestSender,
         IAsiaTubeDbSetter asiaTubeDbSetter
-        )
+    )
     {
         _apolloAttendanceRepository = apolloAttendanceRepository;
         _gaia1001FormRepository = gaia1001FormRepository;
@@ -38,7 +38,7 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
             return Error.NotFound(
                 description:
                 $"Gaia1001 form with FormKind '{command.FormKind}' and FormNo '{command.FormNo}' not found.");
-        
+
         await _asiaTubeDbSetter.SetAsiaTubeDb(gaia1001Form.CompanyId);
 
         var apolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(

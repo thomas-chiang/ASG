@@ -14,7 +14,7 @@ namespace ASG.Application.SubcutaneousTests.ApolloSyncGaia1001FormOperations.Com
 public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediatorFactory)
 {
     private readonly IMediator _mediator = mediatorFactory.CreateMediator();
-    
+
     [Fact]
     public async Task
         CreateApolloSyncGaia1001FormOperation_WhenValidCommand_ShouldCreateApolloSyncGaia1001FormOperation()

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASG.Infrastructure.Common;
 
-public class AsiaTubeDbSetter: IAsiaTubeDbSetter
+public class AsiaTubeDbSetter : IAsiaTubeDbSetter
 {
     private readonly AsiaTubeManageDbContext _asiaTubeManageDbContext;
     private readonly AsiaTubeDbContext _asiaTubeDbContext;
@@ -37,7 +37,7 @@ public class AsiaTubeDbSetter: IAsiaTubeDbSetter
             connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
                                + "Authentication=Active Directory Interactive; Encrypt=True; Database=AsiaTubeDB";
         }
-        
+
         _asiaTubeDbContext.Database.SetConnectionString(connectionString);
     }
 }
