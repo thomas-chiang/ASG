@@ -16,28 +16,30 @@ namespace ASG.Application.SubcutaneousTests.Common;
 
 public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLifetime
 {
-    private AsiaFlowDbTestDatabase _asiaFlowDbTestDatabase = null!;
-    private AsiaTubeManageDbTestDatabase _asiaTubeManageDbTestDatabase = null!;
-    private AsiaTubeDbTestDatabase _asiaTubeDbTestDatabase = null!;
-
+    public AsiaFlowDbTestDatabase AsiaFlowDbTestDatabase = null!;
+    public AsiaTubeManageDbTestDatabase AsiaTubeManageDbTestDatabase = null!;
+    public AsiaTubeDbTestDatabase AsiaTubeDbTestDatabase = null!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        _asiaFlowDbTestDatabase = AsiaFlowDbTestDatabase.CreateAndInitialize();
-        _asiaTubeManageDbTestDatabase = AsiaTubeManageDbTestDatabase.CreateAndInitialize();
-        _asiaTubeDbTestDatabase = AsiaTubeDbTestDatabase.CreateAndInitialize();
+        AsiaFlowDbTestDatabase = AsiaFlowDbTestDatabase.CreateAndInitialize();
+        AsiaTubeManageDbTestDatabase = AsiaTubeManageDbTestDatabase.CreateAndInitialize();
+        AsiaTubeDbTestDatabase = AsiaTubeDbTestDatabase.CreateAndInitialize();
 
         builder.ConfigureTestServices(services =>
         {
             services
-                .RemoveAll<DbContextOptions<AsiaFlowDbContext>>()
+                .RemoveAll<AsiaFlowDbContext>()
                 .AddDbContext<AsiaFlowDbContext>((sp, options) =>
-                    options.UseSqlServer(_asiaFlowDbTestDatabase.Connection))
+                    options.UseSqlServer(AsiaFlowDbTestDatabase.Connection))
                 .RemoveAll<DbContextOptions<AsiaTubeManageDbContext>>()
                 .AddDbContext<AsiaTubeManageDbContext>((sp, options) =>
-                    options.UseSqlServer(_asiaTubeManageDbTestDatabase.Connection))
+                    options.UseSqlServer(AsiaTubeManageDbTestDatabase.Connection))
                 .RemoveAll<AsiaTubeManageDbContext>()
                 .AddTransient(serviceProvider => MockAsiaTubeManageDbContext.CreateMock().Object)
+                .RemoveAll<AsiaTubeDbContext>()
+                .AddDbContext<AsiaTubeDbContext>((sp, options) =>
+                    options.UseSqlServer(AsiaTubeDbTestDatabase.Connection))
                 .RemoveAll<IAnonymousRequestSender>()
                 .AddTransient<IAnonymousRequestSender, MockAnonymousRequestSender>()
                 .RemoveAll<IDbAccessor>()
@@ -50,14 +52,13 @@ public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLif
     {
         var serviceScope = Services.CreateScope();
 
-        _asiaFlowDbTestDatabase.ResetDatabase();
-        _asiaTubeManageDbTestDatabase.ResetDatabase();
-        _asiaTubeDbTestDatabase.ResetDatabase();
+        AsiaFlowDbTestDatabase.ResetDatabase();
+        AsiaTubeManageDbTestDatabase.ResetDatabase();
+        AsiaTubeDbTestDatabase.ResetDatabase();
 
         return serviceScope.ServiceProvider.GetRequiredService<IMediator>();
     }
-
-
+    
     public Task InitializeAsync()
     {
         return Task.CompletedTask;
@@ -65,10 +66,11 @@ public class MediatorFactory : WebApplicationFactory<IAssemblyMarker>, IAsyncLif
 
     public new Task DisposeAsync()
     {
-        _asiaFlowDbTestDatabase.Dispose();
-        _asiaTubeManageDbTestDatabase.Dispose();
-        _asiaTubeDbTestDatabase.Dispose();
+        AsiaFlowDbTestDatabase.Dispose();
+        AsiaTubeManageDbTestDatabase.Dispose();
+        AsiaTubeDbTestDatabase.Dispose();
 
         return Task.CompletedTask;
     }
+
 }

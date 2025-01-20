@@ -1,6 +1,4 @@
 using ASG.Infrastructure.Common.SqlServerDbContexts;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 namespace ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 
@@ -16,5 +14,7 @@ public class AsiaTubeDbTestDatabase : SqlServerDbTestDatabase<AsiaTubeDbContext>
         return testDatabase;
     }
 
-    private AsiaTubeDbTestDatabase(string connectionString) : base(connectionString) { }
+    private AsiaTubeDbTestDatabase(string connectionString) : base(connectionString)
+    {
+    }
 }

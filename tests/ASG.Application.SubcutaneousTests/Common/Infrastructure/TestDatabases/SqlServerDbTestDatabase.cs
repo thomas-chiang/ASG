@@ -6,7 +6,7 @@ namespace ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 public abstract class SqlServerDbTestDatabase<TContext> : IDisposable where TContext : DbContext
 {
     public SqlConnection Connection { get; }
-    protected TContext Context { get; }
+    public TContext Context { get; }
 
     protected SqlServerDbTestDatabase(string connectionString)
     {

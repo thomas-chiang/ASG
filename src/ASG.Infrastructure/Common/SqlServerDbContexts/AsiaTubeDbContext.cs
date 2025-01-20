@@ -9,14 +9,18 @@ public class AsiaTubeDbContext : DbContext
 
     public DbSet<AttendanceHistoryRecord> AttendanceHistoryRecords { get; set; } = null!;
 
-    public AsiaTubeDbContext(string connectionString)
-        : base(new DbContextOptionsBuilder<AsiaTubeDbContext>()
-            .UseSqlServer(connectionString)
-            .Options)
+    public AsiaTubeDbContext(DbContextOptions<AsiaTubeDbContext> options) : base(options)
     {
     }
 
-    public AsiaTubeDbContext(DbContextOptions options) : base(options)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionString = @"Server=sea-asia-tube-sqlsrv.database.windows.net;"
+                                   + "Authentication=Active Directory Interactive; Encrypt=True; Database=AsiaTubeDB";
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
     }
 }

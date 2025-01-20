@@ -1,8 +1,5 @@
-using ASG.Infrastructure.Common.AsiaTubeManageDbSchemas;
 using ASG.Infrastructure.Common.SqlServerDbContexts;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using TestCommon.TestConstants;
+
 
 namespace ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 
@@ -18,17 +15,7 @@ public class AsiaTubeManageDbTestDatabase : SqlServerDbTestDatabase<AsiaTubeMana
         return testDatabase;
     }
 
-    private AsiaTubeManageDbTestDatabase(string connectionString) : base(connectionString) { }
-
-    public override void InitializeDatabase()
+    private AsiaTubeManageDbTestDatabase(string connectionString) : base(connectionString)
     {
-        base.InitializeDatabase();
-        Context.Database.ExecuteSqlRaw(@"
-            INSERT INTO [Company] (CompanyId, CompanyCode, CompanyName)
-            VALUES (@CompanyId, @CompanyCode, @CompanyName)",
-            new SqlParameter("@CompanyId", Constants.Common.DefaultCompanyId),
-            new SqlParameter("@CompanyCode", "DefaultCompanyCode"),
-            new SqlParameter("@CompanyName", "DefaultCompanyName")
-        );
     }
 }

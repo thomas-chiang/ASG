@@ -19,6 +19,7 @@ public static class DependencyInjection
 
         services.AddDbContext<AsiaFlowDbContext>();
         services.AddDbContext<AsiaTubeManageDbContext>();
+        services.AddDbContext<AsiaTubeDbContext>();
 
         services
             .AddScoped<IGaia1001FormRepository, Gaia1001FormRepository>()
