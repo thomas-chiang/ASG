@@ -17,7 +17,7 @@ public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediator
 
     [Fact]
     public async Task
-        CreateApolloSyncGaia1001FormOperation_WhenValidCommand_ShouldCreateApolloSyncGaia1001FormOperation()
+        CreateApolloSyncGaia1001FormOperation_WhenValidCommandAndApolloAlreadyHasClockInRecord_ShouldCreateApolloSyncGaia1001FormOperationOfSituationAlreadyHasClockInRecord()
     {
         // Arrange
         await ArrangeGaia1001FormIsApprovedAndApolloHasClientInRecord(
@@ -37,6 +37,27 @@ public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediator
         createApolloSyncGaia1001FormOperationResult.IsError.Should().BeFalse();
         createApolloSyncGaia1001FormOperationResult.Value.Situation.Should()
             .Be(Sync1001FormSituation.AlreadyHasClockInRecord);
+    }
+
+    [Fact]
+    public async Task
+        CreateApolloSyncGaia1001FormOperation_WhenValidCommandAndNoApolloRecord_ShouldCreateApolloSyncGaia1001FormOperationOfSituationNull()
+    {
+        // Arrange
+        await SetUpGaia1001FormIsApproved(mediatorFactory.AsiaFlowDbTestDatabase);
+        await InsertCompany(mediatorFactory.AsiaTubeManageDbTestDatabase);
+
+        var createApolloSyncGaia1001FormOperationCommand = ApolloSyncGaia1001FormOperationCommandFactory
+            .CreateCreateApolloSyncGaia1001FormOperationCommand();
+
+        // Act
+        var createApolloSyncGaia1001FormOperationResult =
+            await _mediator.Send(createApolloSyncGaia1001FormOperationCommand);
+
+        // Assert
+        createApolloSyncGaia1001FormOperationResult.IsError.Should().BeFalse();
+        createApolloSyncGaia1001FormOperationResult.Value.Situation.Should()
+            .BeNull();
     }
 
     [Theory]
@@ -65,6 +86,80 @@ public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediator
         AsiaFlowDbTestDatabase asiaFlowDbTestDatabase,
         AsiaTubeManageDbTestDatabase asiaTubeManageDbTestDatabase,
         AsiaTubeDbTestDatabase asiaTubeDbTestDatabase)
+    {
+        await SetUpGaia1001FormIsApproved(asiaFlowDbTestDatabase);
+
+        await InsertCompany(asiaTubeManageDbTestDatabase);
+
+        await InsertApolloClockInRecord(asiaTubeDbTestDatabase);
+    }
+
+
+    private static async Task InsertCompany(AsiaTubeManageDbTestDatabase asiaTubeManageDbTestDatabase)
+    {
+        await asiaTubeManageDbTestDatabase.Context.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO [Company] (CompanyId, CompanyCode, CompanyName)
+            VALUES (@CompanyId, @CompanyCode, @CompanyName)",
+            new SqlParameter("@CompanyId", Constants.Common.DefaultCompanyId),
+            new SqlParameter("@CompanyCode", "DefaultCompanyCode"),
+            new SqlParameter("@CompanyName", "DefaultCompanyName")
+        );
+    }
+
+    private static async Task InsertApolloClockInRecord(AsiaTubeDbTestDatabase asiaTubeDbTestDatabase)
+    {
+        await asiaTubeDbTestDatabase.Context.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO [pt].[AttendanceHistory] 
+            (AttendanceHistoryId, EmployeeId, iOriginType, iAttendanceType, AttendanceDate, 
+             AttendanceOn, IsDeleted, IsEffect, PunchesLocationId, LocationName, Latitude, 
+             Longitude, LocationDetails, ExtendWorkHourType, CheckInTimeoutType, 
+             CheckInPersonalReasonTypeId, CheckInPersonalReasonCode, CheckInPersonalReason, 
+             CompanyId, Creater, CreateTime, LatestUpdater, LatestUpdateTime, IdentifyCode, 
+             EditTimes, iLastType, AdjustCheckInTimeoutType, AdjustCheckInPersonalReasonTypeId, 
+             AdjustCheckInPersonalReasonCode, AdjustCheckInPersonalReason)
+            VALUES 
+            (@AttendanceHistoryId, @EmployeeId, @iOriginType, @iAttendanceType, @AttendanceDate, 
+             @AttendanceOn, @IsDeleted, @IsEffect, @PunchesLocationId, @LocationName, @Latitude, 
+             @Longitude, @LocationDetails, @ExtendWorkHourType, @CheckInTimeoutType, 
+             @CheckInPersonalReasonTypeId, @CheckInPersonalReasonCode, @CheckInPersonalReason, 
+             @CompanyId, @Creater, @CreateTime, @LatestUpdater, @LatestUpdateTime, @IdentifyCode, 
+             @EditTimes, @iLastType, @AdjustCheckInTimeoutType, @AdjustCheckInPersonalReasonTypeId, 
+             @AdjustCheckInPersonalReasonCode, @AdjustCheckInPersonalReason)",
+            new SqlParameter("@AttendanceHistoryId", Guid.NewGuid()),
+            new SqlParameter("@EmployeeId", Constants.Common.DefaultUserEmployeeId),
+            new SqlParameter("@iOriginType", 8), // Example value: 匯入
+            new SqlParameter("@iAttendanceType",
+                (int)Constants.Gaia1001Forms.DefaultAttendanceType), // Example value: ClockIn
+            new SqlParameter("@AttendanceDate", Constants.Common.DefaultAttendanceOn),
+            new SqlParameter("@AttendanceOn", Constants.Common.DefaultAttendanceOn),
+            new SqlParameter("@IsDeleted", false),
+            new SqlParameter("@IsEffect", true),
+            new SqlParameter("@PunchesLocationId", Constants.Gaia1001Forms.DefaultLocationId),
+            new SqlParameter("@LocationName", DBNull.Value),
+            new SqlParameter("@Latitude", DBNull.Value),
+            new SqlParameter("@Longitude", DBNull.Value),
+            new SqlParameter("@LocationDetails", DBNull.Value),
+            new SqlParameter("@ExtendWorkHourType", DBNull.Value),
+            new SqlParameter("@CheckInTimeoutType", DBNull.Value),
+            new SqlParameter("@CheckInPersonalReasonTypeId", DBNull.Value),
+            new SqlParameter("@CheckInPersonalReasonCode", DBNull.Value),
+            new SqlParameter("@CheckInPersonalReason", DBNull.Value),
+            new SqlParameter("@CompanyId", Constants.Common.DefaultCompanyId),
+            new SqlParameter("@Creater", Constants.Common.DefaultUserEmployeeId),
+            new SqlParameter("@CreateTime", DateTime.Now),
+            new SqlParameter("@LatestUpdater", Constants.Common.DefaultUserEmployeeId),
+            new SqlParameter("@LatestUpdateTime", DateTime.Now),
+            new SqlParameter("@IdentifyCode", DBNull.Value),
+            new SqlParameter("@EditTimes", DBNull.Value),
+            new SqlParameter("@iLastType", DBNull.Value),
+            new SqlParameter("@AdjustCheckInTimeoutType", DBNull.Value),
+            new SqlParameter("@AdjustCheckInPersonalReasonTypeId", DBNull.Value),
+            new SqlParameter("@AdjustCheckInPersonalReasonCode", DBNull.Value),
+            new SqlParameter("@AdjustCheckInPersonalReason", DBNull.Value)
+        );
+    }
+
+    private static async Task SetUpGaia1001FormIsApproved(AsiaFlowDbTestDatabase asiaFlowDbTestDatabase)
     {
         await asiaFlowDbTestDatabase.Context.Database.ExecuteSqlRawAsync(@"
             IF OBJECT_ID('gbpm.fm_form_header', 'U') IS NOT NULL
@@ -131,65 +226,6 @@ public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediator
             new SqlParameter("@Location1", Constants.Gaia1001Forms.DefaultLocationId),
             new SqlParameter("@UserTubeCompanyId1", Constants.Common.DefaultCompanyId),
             new SqlParameter("@UserTubeEmpId1", Constants.Common.DefaultUserEmployeeId)
-        );
-
-
-        await asiaTubeManageDbTestDatabase.Context.Database.ExecuteSqlRawAsync(@"
-            INSERT INTO [Company] (CompanyId, CompanyCode, CompanyName)
-            VALUES (@CompanyId, @CompanyCode, @CompanyName)",
-            new SqlParameter("@CompanyId", Constants.Common.DefaultCompanyId),
-            new SqlParameter("@CompanyCode", "DefaultCompanyCode"),
-            new SqlParameter("@CompanyName", "DefaultCompanyName")
-        );
-
-        await asiaTubeDbTestDatabase.Context.Database.ExecuteSqlRawAsync(@"
-            INSERT INTO [pt].[AttendanceHistory] 
-            (AttendanceHistoryId, EmployeeId, iOriginType, iAttendanceType, AttendanceDate, 
-             AttendanceOn, IsDeleted, IsEffect, PunchesLocationId, LocationName, Latitude, 
-             Longitude, LocationDetails, ExtendWorkHourType, CheckInTimeoutType, 
-             CheckInPersonalReasonTypeId, CheckInPersonalReasonCode, CheckInPersonalReason, 
-             CompanyId, Creater, CreateTime, LatestUpdater, LatestUpdateTime, IdentifyCode, 
-             EditTimes, iLastType, AdjustCheckInTimeoutType, AdjustCheckInPersonalReasonTypeId, 
-             AdjustCheckInPersonalReasonCode, AdjustCheckInPersonalReason)
-            VALUES 
-            (@AttendanceHistoryId, @EmployeeId, @iOriginType, @iAttendanceType, @AttendanceDate, 
-             @AttendanceOn, @IsDeleted, @IsEffect, @PunchesLocationId, @LocationName, @Latitude, 
-             @Longitude, @LocationDetails, @ExtendWorkHourType, @CheckInTimeoutType, 
-             @CheckInPersonalReasonTypeId, @CheckInPersonalReasonCode, @CheckInPersonalReason, 
-             @CompanyId, @Creater, @CreateTime, @LatestUpdater, @LatestUpdateTime, @IdentifyCode, 
-             @EditTimes, @iLastType, @AdjustCheckInTimeoutType, @AdjustCheckInPersonalReasonTypeId, 
-             @AdjustCheckInPersonalReasonCode, @AdjustCheckInPersonalReason)",
-            new SqlParameter("@AttendanceHistoryId", Guid.NewGuid()),
-            new SqlParameter("@EmployeeId", Constants.Common.DefaultUserEmployeeId),
-            new SqlParameter("@iOriginType", 8), // Example value: 匯入
-            new SqlParameter("@iAttendanceType",
-                (int)Constants.Gaia1001Forms.DefaultAttendanceType), // Example value: ClockIn
-            new SqlParameter("@AttendanceDate", Constants.Common.DefaultAttendanceOn),
-            new SqlParameter("@AttendanceOn", Constants.Common.DefaultAttendanceOn),
-            new SqlParameter("@IsDeleted", false),
-            new SqlParameter("@IsEffect", true),
-            new SqlParameter("@PunchesLocationId", Constants.Gaia1001Forms.DefaultLocationId),
-            new SqlParameter("@LocationName", DBNull.Value),
-            new SqlParameter("@Latitude", DBNull.Value),
-            new SqlParameter("@Longitude", DBNull.Value),
-            new SqlParameter("@LocationDetails", DBNull.Value),
-            new SqlParameter("@ExtendWorkHourType", DBNull.Value),
-            new SqlParameter("@CheckInTimeoutType", DBNull.Value),
-            new SqlParameter("@CheckInPersonalReasonTypeId", DBNull.Value),
-            new SqlParameter("@CheckInPersonalReasonCode", DBNull.Value),
-            new SqlParameter("@CheckInPersonalReason", DBNull.Value),
-            new SqlParameter("@CompanyId", Constants.Common.DefaultCompanyId),
-            new SqlParameter("@Creater", Constants.Common.DefaultUserEmployeeId),
-            new SqlParameter("@CreateTime", DateTime.Now),
-            new SqlParameter("@LatestUpdater", Constants.Common.DefaultUserEmployeeId),
-            new SqlParameter("@LatestUpdateTime", DateTime.Now),
-            new SqlParameter("@IdentifyCode", DBNull.Value),
-            new SqlParameter("@EditTimes", DBNull.Value),
-            new SqlParameter("@iLastType", DBNull.Value),
-            new SqlParameter("@AdjustCheckInTimeoutType", DBNull.Value),
-            new SqlParameter("@AdjustCheckInPersonalReasonTypeId", DBNull.Value),
-            new SqlParameter("@AdjustCheckInPersonalReasonCode", DBNull.Value),
-            new SqlParameter("@AdjustCheckInPersonalReason", DBNull.Value)
         );
     }
 }

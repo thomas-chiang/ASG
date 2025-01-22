@@ -2,6 +2,7 @@ using System.ComponentModel;
 using ASG.Domain.ApolloAttendances;
 using ASG.Domain.ApolloAttendances.Enums;
 using ASG.Domain.ApolloSyncGaia1001FormOperations.Enums;
+using ASG.Domain.ApolloSyncGaia1001FormOperations.Events;
 using ASG.Domain.ApolloSyncGaia1001FormOperations.Requests;
 using ASG.Domain.Common;
 using ASG.Domain.Common.Enums;
@@ -12,7 +13,7 @@ using ErrorOr;
 
 namespace ASG.Domain.ApolloSyncGaia1001FormOperations;
 
-public class ApolloSyncGaia1001FormOperation
+public class ApolloSyncGaia1001FormOperation : Entity
 {
     public required Gaia1001Form Gaia1001Form { get; set; }
     public required ApolloAttendance ApolloAttendance { get; set; }
@@ -45,6 +46,11 @@ public class ApolloSyncGaia1001FormOperation
                 AppendFailedRequests();
                 break;
         }
+    }
+
+    public void SendAnonymousRequests()
+    {
+        _domainEvents.Add(new SendAnonymousRequestsEvent(AnonymousRequests));
     }
 
     public ErrorOr<Success> SetSituation()

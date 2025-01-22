@@ -14,19 +14,20 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
     private readonly IGaia1001FormRepository _gaia1001FormRepository;
     private readonly IAnonymousRequestSender _anonymousRequestSender;
     private readonly IAsiaTubeDbSetter _asiaTubeDbSetter;
+    private readonly IDomainEventContext _domainEventContext;
 
 
     public CreateApolloSyncGaia1001FormOperationCommandHandler(
         IApolloAttendanceRepository apolloAttendanceRepository,
         IGaia1001FormRepository gaia1001FormRepository,
         IAnonymousRequestSender anonymousRequestSender,
-        IAsiaTubeDbSetter asiaTubeDbSetter
-    )
+        IAsiaTubeDbSetter asiaTubeDbSetter, IDomainEventContext domainEventContext)
     {
         _apolloAttendanceRepository = apolloAttendanceRepository;
         _gaia1001FormRepository = gaia1001FormRepository;
         _anonymousRequestSender = anonymousRequestSender;
         _asiaTubeDbSetter = asiaTubeDbSetter;
+        _domainEventContext = domainEventContext;
     }
 
     public async Task<ErrorOr<ApolloSyncGaia1001FormOperation>> Handle(
@@ -56,8 +57,9 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
 
         apolloSyncGaia1001FormOperation.SetAnonymousRequestsToBeSent();
 
-        foreach (var request in apolloSyncGaia1001FormOperation.AnonymousRequests)
-            await _anonymousRequestSender.SendAndUpdateAnonymousRequest(request);
+        apolloSyncGaia1001FormOperation.SendAnonymousRequests();
+        // foreach (var request in apolloSyncGaia1001FormOperation.AnonymousRequests)
+        //     await _anonymousRequestSender.SendAndUpdateAnonymousRequest(request);
 
         if (apolloSyncGaia1001FormOperation.AnonymousRequests.Count != 0)
         {
@@ -73,6 +75,8 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
 
         var operationResult = apolloSyncGaia1001FormOperation.SetSituation();
         if (operationResult.IsError) return operationResult.Errors;
+        await _domainEventContext.Collect(apolloSyncGaia1001FormOperation);
+        await _domainEventContext.Publish();
 
         return apolloSyncGaia1001FormOperation;
     }
