@@ -50,7 +50,7 @@ public class ApolloSyncGaia1001FormOperation : Entity
 
     public void SendAnonymousRequests()
     {
-        _domainEvents.Add(new SendAnonymousRequestsEvent(AnonymousRequests));
+        DomainEvents.Add(new AnonymousRequestsSentEvent(AnonymousRequests));
     }
 
     public ErrorOr<Success> SetSituation()

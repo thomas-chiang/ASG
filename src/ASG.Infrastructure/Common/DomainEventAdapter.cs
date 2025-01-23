@@ -4,17 +4,17 @@ using MediatR;
 
 namespace ASG.Infrastructure.Common;
 
-public class DomainEventContext : IDomainEventContext
+public class DomainEventAdapter : IDomainEventAdapter
 {
-    protected readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<IDomainEvent> _domainEvents = [];
     private IPublisher _publisher;
 
-    public DomainEventContext(IPublisher publisher)
+    public DomainEventAdapter(IPublisher publisher)
     {
         _publisher = publisher;
     }
 
-    public List<IDomainEvent> PopDomainEvents()
+    private List<IDomainEvent> PopDomainEvents()
     {
         var copy = _domainEvents.ToList();
 
@@ -23,13 +23,13 @@ public class DomainEventContext : IDomainEventContext
         return copy;
     }
 
-    public Task Collect(Entity entity)
+    public Task CollectDomainEvents(Entity entity)
     {
         _domainEvents.AddRange(entity.PopDomainEvents());
         return Task.CompletedTask;
     }
 
-    public async Task Publish()
+    public async Task HandleDomainEvents()
     {
         var domainEvents = PopDomainEvents();
         foreach (var domainEvent in domainEvents) await _publisher.Publish(domainEvent);

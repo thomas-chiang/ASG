@@ -2,13 +2,13 @@ namespace ASG.Domain.Common;
 
 public abstract class Entity
 {
-    protected readonly List<IDomainEvent> _domainEvents = [];
+    protected readonly List<IDomainEvent> DomainEvents = [];
 
     public List<IDomainEvent> PopDomainEvents()
     {
-        var copy = _domainEvents.ToList();
+        var copy = DomainEvents.ToList();
 
-        _domainEvents.Clear();
+        DomainEvents.Clear();
 
         return copy;
     }

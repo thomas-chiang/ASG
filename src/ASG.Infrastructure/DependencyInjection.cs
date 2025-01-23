@@ -25,7 +25,7 @@ public static class DependencyInjection
             .AddScoped<IGaia1001FormRepository, Gaia1001FormRepository>()
             .AddScoped<IApolloAttendanceRepository, ApolloAttendenceRepository>()
             .AddScoped<IAsiaTubeDbSetter, AsiaTubeDbSetter>()
-            .AddScoped<IDomainEventContext, DomainEventContext>()
+            .AddScoped<IDomainEventAdapter, DomainEventAdapter>()
             ;
 
         services.AddHttpClient<IAnonymousRequestSender, AnonymousRequestSender>();

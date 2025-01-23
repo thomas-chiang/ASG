@@ -4,16 +4,16 @@ using MediatR;
 
 namespace ASG.Application.ApolloSyncGaia1001FormOperations.Events;
 
-public class SendAnonymousRequestsEventHandler : INotificationHandler<SendAnonymousRequestsEvent>
+public class AnonymousRequestsSentEventHandler : INotificationHandler<AnonymousRequestsSentEvent>
 {
     private readonly IAnonymousRequestSender _anonymousRequestSender;
 
-    public SendAnonymousRequestsEventHandler(IAnonymousRequestSender anonymousRequestSender)
+    public AnonymousRequestsSentEventHandler(IAnonymousRequestSender anonymousRequestSender)
     {
         _anonymousRequestSender = anonymousRequestSender;
     }
 
-    public async Task Handle(SendAnonymousRequestsEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(AnonymousRequestsSentEvent notification, CancellationToken cancellationToken)
     {
         foreach (var request in notification.AnonymousRequests)
             await _anonymousRequestSender.SendAndUpdateAnonymousRequest(request);
