@@ -23,23 +23,56 @@ public class ApolloSyncGaia1001FormOperation : Entity
 
     public ApolloAttendance? UpdatedApolloAttendance { get; set; }
 
-    public void SetAnonymousRequestsToBeSent()
+    public static bool HasOtherEffectiveAttendanceMethod(
+        List<ApolloAttendanceHistory> apolloAttendanceHistories,
+        List<Apollo1001Form> apollo1001Forms,
+        int currentFormNo)
     {
-        if (HasOtherEffectiveAttendanceMethod()) return;
+        // Already has an effective record with a method other than Approval
+        if (apolloAttendanceHistories.Any(history =>
+                history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval))
+            return true;
 
-        var apollo1001Form = GetApollo1001FormMatchingGaia1001Form();
+        // Already has other effective 1001 form with Approval attendance method
+        if (apolloAttendanceHistories.Any(history =>
+                history.IsEffective && history.AttendanceMethod == AttendanceMethod.Approval) &&
+            apollo1001Forms.Any(form =>
+                form.ApprovalStatus == Apollo1001ApprovalStatus.Ok && form.FormNo != currentFormNo))
+            return true;
 
+        return false;
+    }
+
+    public void SetSituation()
+    {
+        Situation = Gaia1001Form.AttendanceType switch
+        {
+            AttendanceType.ClockIn => Sync1001FormSituation.AlreadyHasClockInRecord,
+            AttendanceType.ClockOut => Sync1001FormSituation.AlreadyHasClockOutRecord,
+            _ => Sync1001FormSituation.AlreadyHasOtherAttendanceTypeRecordOrIsStillApproving
+        };
+    }
+
+    public static Apollo1001Form? GetApollo1001FormMatchingGaia1001Form(List<Apollo1001Form> apollo1001Forms,
+        string formKind, int formNo)
+    {
+        return apollo1001Forms.FirstOrDefault(form =>
+            form.FormKind == formKind && form.FormNo == formNo);
+    }
+
+    public void SetAnonymousRequestsToBeSent(Apollo1001Form? apollo1001FormMatchingGaiaFormNo)
+    {
         switch (Gaia1001Form.FormStatus)
         {
-            case Gaia1001FormStatus.Approved when apollo1001Form == null:
+            case Gaia1001FormStatus.Approved when apollo1001FormMatchingGaiaFormNo == null:
                 AppendRequestToCreateAndApproveForm();
                 break;
             case Gaia1001FormStatus.Approved or Gaia1001FormStatus.Rejected when
-                apollo1001Form is { ApprovalStatus: Apollo1001ApprovalStatus.Unknown }:
+                apollo1001FormMatchingGaiaFormNo is { ApprovalStatus: Apollo1001ApprovalStatus.Unknown }:
                 AppendRequestToApproveForm();
                 break;
             case Gaia1001FormStatus.Deleted when
-                apollo1001Form is { ApprovalStatus: Apollo1001ApprovalStatus.Ok }:
+                apollo1001FormMatchingGaiaFormNo is { ApprovalStatus: Apollo1001ApprovalStatus.Ok }:
                 AppendRequestToRecallForm();
                 break;
             default:
@@ -53,72 +86,39 @@ public class ApolloSyncGaia1001FormOperation : Entity
         DomainEvents.Add(new AnonymousRequestsSentEvent(AnonymousRequests));
     }
 
-    public ErrorOr<Success> SetSituation()
+    public ErrorOr<Success> SetSituation(Apollo1001Form? updatedApollo1001Form)
     {
-        if (HasOtherEffectiveAttendanceMethod())
-        {
-            Situation = Gaia1001Form.AttendanceType switch
-            {
-                AttendanceType.ClockIn => Sync1001FormSituation.AlreadyHasClockInRecord,
-                AttendanceType.ClockOut => Sync1001FormSituation.AlreadyHasClockOutRecord,
-                _ => Sync1001FormSituation.AlreadyHasOtherAttendanceTypeRecordOrIsStillApproving
-            };
-            return Result.Success;
-        }
-
         if (UpdatedApolloAttendance == null)
             return ApolloSyncGaia1001FormOperationErrors.ApolloAttendanceNotFetchedAgain;
 
-        if (UpdatedApolloAttendance.Apollo1001Forms.Any(form =>
-                form.FormKind == Gaia1001Form.FormKind &&
-                form.FormNo == Gaia1001Form.FormNo &&
-                (
-                    (
-                        form.ApprovalStatus == Apollo1001ApprovalStatus.Ok
-                        && Gaia1001Form.FormStatus == Gaia1001FormStatus.Approved
-                    )
-                    ||
-                    (
-                        form.ApprovalStatus == Apollo1001ApprovalStatus.Unknown
-                        && new HashSet<Gaia1001FormStatus>
-                        {
-                            Gaia1001FormStatus.WaitingApprove,
-                            Gaia1001FormStatus.UnderApproving
-                        }.Contains(Gaia1001Form.FormStatus)
-                    )
-                    ||
-                    (
-                        form.ApprovalStatus == Apollo1001ApprovalStatus.Deny
-                        && Gaia1001Form.FormStatus == Gaia1001FormStatus.Rejected
-                    )
-                    ||
-                    (
-                        form.ApprovalStatus == Apollo1001ApprovalStatus.Delete &&
-                        Gaia1001Form.FormStatus == Gaia1001FormStatus.Deleted
-                    )
-                )
-            )) Situation = Sync1001FormSituation.NormalFailSync;
+        if (updatedApollo1001Form == null)
+        {
+            Situation = Sync1001FormSituation.NeedFurtherInvestigation;
+            return Result.Success;
+            ;
+        }
+
+        Situation = IsNormalFailedSync(updatedApollo1001Form)
+            ? Sync1001FormSituation.NormalFailedSync
+            : Sync1001FormSituation.NeedFurtherInvestigation;
+
         return Result.Success;
     }
 
-    private bool HasOtherEffectiveAttendanceMethod()
+    private bool IsNormalFailedSync(Apollo1001Form updatedApollo1001Form)
     {
-        // already has effective record with other AttendanceMethod
-        return ApolloAttendance.ApolloAttendanceHistories.Any(history =>
-                   history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval)
-               || ( // already has other effective 1001 form
-                   ApolloAttendance.ApolloAttendanceHistories.Any(history =>
-                       history.IsEffective && history.AttendanceMethod == AttendanceMethod.Approval)
-                   &&
-                   ApolloAttendance.Apollo1001Forms.Any(form =>
-                       form.ApprovalStatus == Apollo1001ApprovalStatus.Ok && form.FormNo != Gaia1001Form.FormNo)
-               );
-    }
-
-    private Apollo1001Form? GetApollo1001FormMatchingGaia1001Form()
-    {
-        return ApolloAttendance.Apollo1001Forms.FirstOrDefault(form =>
-            form.FormKind == Gaia1001Form.FormKind && form.FormNo == Gaia1001Form.FormNo);
+        return (updatedApollo1001Form.ApprovalStatus == Apollo1001ApprovalStatus.Ok &&
+                Gaia1001Form.FormStatus == Gaia1001FormStatus.Approved) ||
+               (updatedApollo1001Form.ApprovalStatus == Apollo1001ApprovalStatus.Unknown &&
+                new HashSet<Gaia1001FormStatus>
+                {
+                    Gaia1001FormStatus.WaitingApprove,
+                    Gaia1001FormStatus.UnderApproving
+                }.Contains(Gaia1001Form.FormStatus)) ||
+               (updatedApollo1001Form.ApprovalStatus == Apollo1001ApprovalStatus.Deny &&
+                Gaia1001Form.FormStatus == Gaia1001FormStatus.Rejected) ||
+               (updatedApollo1001Form.ApprovalStatus == Apollo1001ApprovalStatus.Delete &&
+                Gaia1001Form.FormStatus == Gaia1001FormStatus.Deleted);
     }
 
     private void AppendRequestToCreateAndApproveForm()

@@ -11,5 +11,7 @@ public enum Sync1001FormSituation
     [Description("忘打卡_打卡時間已存在打卡紀錄或簽核中忘打卡申請單")]
     AlreadyHasOtherAttendanceTypeRecordOrIsStillApproving,
 
-    [Description("忘打卡_一般拋轉失敗")] NormalFailSync
+    [Description("忘打卡_一般拋轉失敗")] NormalFailedSync,
+
+    [Description("")] NeedFurtherInvestigation
 }

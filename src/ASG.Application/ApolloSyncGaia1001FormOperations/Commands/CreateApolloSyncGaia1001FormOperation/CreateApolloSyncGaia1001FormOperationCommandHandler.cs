@@ -55,25 +55,35 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
             ApolloAttendance = apolloAttendance
         };
 
-        apolloSyncGaia1001FormOperation.SetAnonymousRequestsToBeSent();
+        if (ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(
+                apolloAttendance.ApolloAttendanceHistories, apolloAttendance.Apollo1001Forms, command.FormNo))
+        {
+            apolloSyncGaia1001FormOperation.SetSituation();
+            return apolloSyncGaia1001FormOperation;
+        }
+
+        var apollo1001FormMatchingGaiaFormNo =
+            ApolloSyncGaia1001FormOperation.GetApollo1001FormMatchingGaia1001Form(apolloAttendance.Apollo1001Forms,
+                command.FormKind, command.FormNo);
+        apolloSyncGaia1001FormOperation.SetAnonymousRequestsToBeSent(apollo1001FormMatchingGaiaFormNo);
 
         apolloSyncGaia1001FormOperation.SendAnonymousRequests();
         await _domainEventAdapter.CollectDomainEvents(apolloSyncGaia1001FormOperation);
         await _domainEventAdapter.HandleDomainEvents();
 
-        if (apolloSyncGaia1001FormOperation.AnonymousRequests.Count != 0)
-        {
-            var updatedApolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(
-                gaia1001Form.CompanyId,
-                gaia1001Form.UserEmployeeId,
-                DateOnly.FromDateTime(gaia1001Form.AttendanceOn),
-                gaia1001Form.AttendanceType
-            );
+        var updatedApolloAttendance = await _apolloAttendanceRepository.GetApolloAttendance(
+            gaia1001Form.CompanyId,
+            gaia1001Form.UserEmployeeId,
+            DateOnly.FromDateTime(gaia1001Form.AttendanceOn),
+            gaia1001Form.AttendanceType
+        );
+        apolloSyncGaia1001FormOperation.UpdatedApolloAttendance = updatedApolloAttendance;
+        var updatedApollo1001Form =
+            ApolloSyncGaia1001FormOperation.GetApollo1001FormMatchingGaia1001Form(
+                updatedApolloAttendance.Apollo1001Forms,
+                command.FormKind, command.FormNo);
 
-            apolloSyncGaia1001FormOperation.UpdatedApolloAttendance = updatedApolloAttendance;
-        }
-
-        var operationResult = apolloSyncGaia1001FormOperation.SetSituation();
+        var operationResult = apolloSyncGaia1001FormOperation.SetSituation(updatedApollo1001Form);
         if (operationResult.IsError) return operationResult.Errors;
 
 

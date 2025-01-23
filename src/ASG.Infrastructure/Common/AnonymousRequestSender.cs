@@ -24,6 +24,8 @@ public class AnonymousRequestSender : IAnonymousRequestSender
 
         var responseBody = await response.Content.ReadAsStringAsync();
 
+        anonymousRequest.StatusCode = response.StatusCode;
+
         anonymousRequest.Result = $"Status Code: {response.StatusCode}, Response Body: {responseBody}";
     }
 }

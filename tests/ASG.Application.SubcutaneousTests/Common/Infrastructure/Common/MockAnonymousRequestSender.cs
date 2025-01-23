@@ -1,3 +1,4 @@
+using System.Net;
 using ASG.Application.Common.Interfaces;
 using ASG.Domain.Common;
 
@@ -14,7 +15,8 @@ public class MockAnonymousRequestSender : IAnonymousRequestSender
 
     public Task SendAndUpdateAnonymousRequest(AnonymousRequest anonymousRequest)
     {
-        anonymousRequest.Result = $"Status Code: {"Mock 200"}, Response Body: {"Mock Response Body"}";
+        anonymousRequest.StatusCode = HttpStatusCode.InternalServerError;
+        anonymousRequest.Result = $"Status Code: {"Mock 500"}, Response Body: {"Mock Response Body"}";
         return Task.CompletedTask;
     }
 }

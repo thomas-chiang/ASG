@@ -1,3 +1,4 @@
+using System.Net;
 using ASG.Application.SubcutaneousTests.Common;
 using ASG.Application.SubcutaneousTests.Common.Infrastructure.TestDatabases;
 using ASG.Domain.ApolloSyncGaia1001FormOperations.Enums;
@@ -41,7 +42,7 @@ public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediator
 
     [Fact]
     public async Task
-        CreateApolloSyncGaia1001FormOperation_WhenValidCommandAndNoApolloRecord_ShouldCreateApolloSyncGaia1001FormOperationOfSituationNull()
+        CreateApolloSyncGaia1001FormOperation_WhenValidCommandAndNoApolloRecord_ShouldPerformAnonymousPostRequest()
     {
         // Arrange
         await SetUpGaia1001FormIsApproved(mediatorFactory.AsiaFlowDbTestDatabase);
@@ -56,8 +57,10 @@ public class CreateApolloSyncGaia1001FormOperationTests(MediatorFactory mediator
 
         // Assert
         createApolloSyncGaia1001FormOperationResult.IsError.Should().BeFalse();
-        createApolloSyncGaia1001FormOperationResult.Value.Situation.Should()
-            .BeNull();
+        createApolloSyncGaia1001FormOperationResult.Value.AnonymousRequests.Should()
+            .HaveCount(1, "there should be exactly one anonymous request");
+        createApolloSyncGaia1001FormOperationResult.Value.AnonymousRequests.First().StatusCode.Should()
+            .Be(HttpStatusCode.InternalServerError);
     }
 
     [Theory]

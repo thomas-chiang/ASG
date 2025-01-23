@@ -11,6 +11,8 @@ public static partial class Constants
 
         public const int DefaultFormNo = 1;
 
+        public const int DefaultOtherFormNo = 2;
+
         public const Gaia1001FormStatus DefaultGaia1001FormStatus = Gaia1001FormStatus.Approved;
 
         public static readonly Guid DefaultLocationId = new("00000000-0000-0000-0000-000000000001");
