@@ -1,6 +1,7 @@
 using ASG.Domain.ApolloAttendances;
 using ASG.Domain.ApolloAttendances.Enums;
 using ASG.Domain.ApolloSyncGaia1001FormOperations;
+using ASG.Domain.Gaia1001Forms.Enums;
 using FluentAssertions;
 using TestCommon.ApolloAttendances;
 using TestCommon.TestConstants;
@@ -9,6 +10,22 @@ namespace ASG.Domain.UnitTests.ApolloSyncGaia1001FormOperations;
 
 public partial class ApolloSyncGaia1001FormOperationTests
 {
+    [Fact]
+    public void HasOtherEffectiveAttendanceMethod_ReturnsFasle_WhenGaia1001FormStatusIsRecall()
+    {
+        // Arrange
+        var histories = new List<ApolloAttendanceHistory>();
+        var forms = new List<Apollo1001Form>();
+
+        // Act
+        var result =
+            ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(histories, forms,
+                Constants.Gaia1001Forms.DefaultFormNo, Gaia1001FormStatus.Recall);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
     [Fact]
     public void HasOtherEffectiveAttendanceMethod_ReturnsTrue_WhenHistoryHasOtherMethod()
     {
@@ -22,7 +39,7 @@ public partial class ApolloSyncGaia1001FormOperationTests
         // Act
         var result =
             ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(histories, forms,
-                Constants.Gaia1001Forms.DefaultFormNo);
+                Constants.Gaia1001Forms.DefaultFormNo, Gaia1001FormStatus.Approved);
 
         // Assert
         result.Should().BeTrue();
@@ -45,7 +62,7 @@ public partial class ApolloSyncGaia1001FormOperationTests
         // Act
         var result =
             ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(histories, forms,
-                Constants.Gaia1001Forms.DefaultFormNo);
+                Constants.Gaia1001Forms.DefaultFormNo, Gaia1001FormStatus.Approved);
 
         // Assert
         result.Should().BeTrue();
@@ -64,7 +81,7 @@ public partial class ApolloSyncGaia1001FormOperationTests
         // Act
         var result =
             ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(histories, forms,
-                Constants.Gaia1001Forms.DefaultFormNo);
+                Constants.Gaia1001Forms.DefaultFormNo, Gaia1001FormStatus.Approved);
 
         // Assert
         result.Should().BeFalse();
@@ -82,7 +99,7 @@ public partial class ApolloSyncGaia1001FormOperationTests
         // Act
         var result =
             ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(histories, forms,
-                Constants.Gaia1001Forms.DefaultFormNo);
+                Constants.Gaia1001Forms.DefaultFormNo, Gaia1001FormStatus.Approved);
 
         // Assert
         result.Should().BeFalse();

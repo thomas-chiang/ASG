@@ -26,8 +26,11 @@ public class ApolloSyncGaia1001FormOperation : Entity
     public static bool HasOtherEffectiveAttendanceMethod(
         List<ApolloAttendanceHistory> apolloAttendanceHistories,
         List<Apollo1001Form> apollo1001Forms,
-        int currentFormNo)
+        int currentFormNo,
+        Gaia1001FormStatus gaia1001FormStatus)
     {
+        if (gaia1001FormStatus == Gaia1001FormStatus.Recall) return false;
+
         // Already has an effective record with a method other than Approval
         if (apolloAttendanceHistories.Any(history =>
                 history.IsEffective && history.AttendanceMethod != AttendanceMethod.Approval))
@@ -43,7 +46,7 @@ public class ApolloSyncGaia1001FormOperation : Entity
         return false;
     }
 
-    public void SetSituation()
+    public void SetSituationWithExistedEffectiveAttendance()
     {
         Situation = Gaia1001Form.AttendanceType switch
         {
@@ -53,10 +56,10 @@ public class ApolloSyncGaia1001FormOperation : Entity
         };
     }
 
-    public static Apollo1001Form? GetApollo1001FormMatchingGaia1001Form(List<Apollo1001Form> apollo1001Forms,
+    public static Apollo1001Form? GetApollo1001FormMatchingGaia1001Form(List<Apollo1001Form>? apollo1001Forms,
         string formKind, int formNo)
     {
-        return apollo1001Forms.FirstOrDefault(form =>
+        return apollo1001Forms?.FirstOrDefault(form =>
             form.FormKind == formKind && form.FormNo == formNo);
     }
 
@@ -86,22 +89,17 @@ public class ApolloSyncGaia1001FormOperation : Entity
         DomainEvents.Add(new AnonymousRequestsSentEvent(AnonymousRequests));
     }
 
-    public ErrorOr<Success> SetSituation(Apollo1001Form? updatedApollo1001Form)
+    public ErrorOr<Success> SetSituationAfterSendingAnonymousRequests(Apollo1001Form? updatedApollo1001Form)
     {
-        if (UpdatedApolloAttendance == null)
-            return ApolloSyncGaia1001FormOperationErrors.ApolloAttendanceNotFetchedAgain;
+        // if (UpdatedApolloAttendance == null)
+        //     return ApolloSyncGaia1001FormOperationErrors.ApolloAttendanceNotFetchedAgain;
 
         if (updatedApollo1001Form == null)
-        {
-            Situation = Sync1001FormSituation.NeedFurtherInvestigation;
-            return Result.Success;
-            ;
-        }
+            return ApolloSyncGaia1001FormOperationErrors.FailedApolloSyncGaia1001FormOperation;
 
-        Situation = IsNormalFailedSync(updatedApollo1001Form)
-            ? Sync1001FormSituation.NormalFailedSync
-            : Sync1001FormSituation.NeedFurtherInvestigation;
-
+        if (!IsNormalFailedSync(updatedApollo1001Form))
+            return ApolloSyncGaia1001FormOperationErrors.FailedApolloSyncGaia1001FormOperation;
+        Situation = Sync1001FormSituation.NormalFailedSync;
         return Result.Success;
     }
 

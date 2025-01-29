@@ -2,6 +2,7 @@ using ASG.Application.ApolloAttendances.Interfaces;
 using ASG.Application.Common.Interfaces;
 using ASG.Application.Gaia1001Forms.Interfaces;
 using ASG.Domain.ApolloSyncGaia1001FormOperations;
+using ASG.Domain.ApolloSyncGaia1001FormOperations.Enums;
 using ErrorOr;
 using MediatR;
 
@@ -56,9 +57,10 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
         };
 
         if (ApolloSyncGaia1001FormOperation.HasOtherEffectiveAttendanceMethod(
-                apolloAttendance.ApolloAttendanceHistories, apolloAttendance.Apollo1001Forms, command.FormNo))
+                apolloAttendance.ApolloAttendanceHistories, apolloAttendance.Apollo1001Forms, command.FormNo,
+                gaia1001Form.FormStatus))
         {
-            apolloSyncGaia1001FormOperation.SetSituation();
+            apolloSyncGaia1001FormOperation.SetSituationWithExistedEffectiveAttendance();
             return apolloSyncGaia1001FormOperation;
         }
 
@@ -83,10 +85,13 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
                 updatedApolloAttendance.Apollo1001Forms,
                 command.FormKind, command.FormNo);
 
-        var operationResult = apolloSyncGaia1001FormOperation.SetSituation(updatedApollo1001Form);
-        if (operationResult.IsError) return operationResult.Errors;
-
-
+        var operationResult =
+            apolloSyncGaia1001FormOperation.SetSituationAfterSendingAnonymousRequests(updatedApollo1001Form);
+        if (!operationResult.IsError) return apolloSyncGaia1001FormOperation;
+        if (!operationResult.Errors.Contains(
+                ApolloSyncGaia1001FormOperationErrors.FailedApolloSyncGaia1001FormOperation))
+            return operationResult.Errors;
+        apolloSyncGaia1001FormOperation.Situation = Sync1001FormSituation.NeedFurtherInvestigation;
         return apolloSyncGaia1001FormOperation;
     }
 }
