@@ -37,9 +37,8 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
         var gaia1001Form = await _gaia1001FormRepository.GetGaia1001Form(command.FormKind, command.FormNo);
 
         if (gaia1001Form == null)
-            return Error.NotFound(
-                description:
-                $"Gaia1001 form with FormKind '{command.FormKind}' and FormNo '{command.FormNo}' not found.");
+            return CreateApolloSyncGaia1001FormOperationCommandErrors.Gaia1001FormNotFound(command.FormKind,
+                command.FormNo);
 
         await _asiaTubeDbSetter.SetAsiaTubeDb(gaia1001Form.CompanyId);
 

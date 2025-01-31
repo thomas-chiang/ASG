@@ -32,6 +32,8 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
             "gbpm." + formKind.Replace(".", "")
         );
 
+        if (attendanceInfo == null) return null;
+
         var gaia1001Form = new Gaia1001Form
         {
             FormKind = formKind,
@@ -99,7 +101,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
             }).ToListAsync();
     }
 
-    private List<PtSyncFormOperation> GetPtSyncFormOperations(List<PtSyncForm> pTSyncForms)
+    private static List<PtSyncFormOperation> GetPtSyncFormOperations(List<PtSyncForm> pTSyncForms)
     {
         return pTSyncForms.Select(form => new PtSyncFormOperation
         {
@@ -112,7 +114,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
         }).ToList();
     }
 
-    private async Task<Gaia1001Attendance> GetAttendanceInfo(string formKind, int formNo, string tableName)
+    private async Task<Gaia1001Attendance?> GetAttendanceInfo(string formKind, int formNo, string tableName)
     {
         var attendanceQuery = $@"
             SELECT
@@ -159,10 +161,7 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
             .FirstOrDefaultAsync();
 
 
-        return gaia1001Attendance ??
-               throw new InvalidOperationException(
-                   $"No attendance information found for formKind: {formKind} and formNo: {formNo}.");
-        ;
+        return gaia1001Attendance;
     }
 
     private void TransformFormContentToJson(List<PtSyncFormOperation> ptSyncFormOperations)
@@ -175,17 +174,17 @@ public class Gaia1001FormRepository : IGaia1001FormRepository
                 {
                     case FormAction.Apply:
                         operation.FormActionJson =
-                            JsonConvert.DeserializeObject<ApplyReCheckInFormRequestBody>(operation.FormContent);
+                            JsonConvert.DeserializeObject<ApplyReCheckInFormRequestBody>(operation.FormContent)!;
                         break;
 
                     case FormAction.Approve:
                         operation.FormActionJson =
-                            JsonConvert.DeserializeObject<ApproveReCheckInFormRequestBody>(operation.FormContent);
+                            JsonConvert.DeserializeObject<ApproveReCheckInFormRequestBody>(operation.FormContent)!;
                         break;
 
                     case FormAction.Recalled:
                         operation.FormActionJson =
-                            JsonConvert.DeserializeObject<RecalledReCheckInFormRequestBody>(operation.FormContent);
+                            JsonConvert.DeserializeObject<RecalledReCheckInFormRequestBody>(operation.FormContent)!;
                         break;
 
                     default:

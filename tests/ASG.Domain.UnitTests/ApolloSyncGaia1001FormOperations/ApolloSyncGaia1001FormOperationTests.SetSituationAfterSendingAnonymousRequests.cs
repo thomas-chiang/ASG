@@ -19,7 +19,6 @@ public partial class ApolloSyncGaia1001FormOperationTests
     {
         // Arrange
         var operation = ApolloSyncGaia1001FormOperationFactory.CreateApolloSyncGaia1001FormOperation();
-        // operation.UpdatedApolloAttendance = ApolloAttendanceFactory.CreateApolloAttendance();
 
 
         // Act
@@ -41,7 +40,6 @@ public partial class ApolloSyncGaia1001FormOperationTests
         var operation = ApolloSyncGaia1001FormOperationFactory.CreateApolloSyncGaia1001FormOperation(
             Gaia1001FormFactory.CreateGaia1001Form(gaia1001FormStatus: Gaia1001FormStatus.Approved)
         );
-        // operation.UpdatedApolloAttendance = ApolloAttendanceFactory.CreateApolloAttendance();
 
         // Act
         var result = operation.SetSituationAfterSendingAnonymousRequests(updatedApollo1001Form);
@@ -61,7 +59,6 @@ public partial class ApolloSyncGaia1001FormOperationTests
         var operation = ApolloSyncGaia1001FormOperationFactory.CreateApolloSyncGaia1001FormOperation(
             Gaia1001FormFactory.CreateGaia1001Form(gaia1001FormStatus: Gaia1001FormStatus.Rejected)
         );
-        // operation.UpdatedApolloAttendance = ApolloAttendanceFactory.CreateApolloAttendance();
 
         // Act
         var result = operation.SetSituationAfterSendingAnonymousRequests(updatedApollo1001Form);

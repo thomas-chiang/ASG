@@ -91,9 +91,6 @@ public class ApolloSyncGaia1001FormOperation : Entity
 
     public ErrorOr<Success> SetSituationAfterSendingAnonymousRequests(Apollo1001Form? updatedApollo1001Form)
     {
-        // if (UpdatedApolloAttendance == null)
-        //     return ApolloSyncGaia1001FormOperationErrors.ApolloAttendanceNotFetchedAgain;
-
         if (updatedApollo1001Form == null)
             return ApolloSyncGaia1001FormOperationErrors.FailedApolloSyncGaia1001FormOperation;
 
