@@ -1,5 +1,3 @@
-using ASG.Domain.Common;
-
-namespace ASG.Domain.ApolloSyncGaia1001FormOperations.Events;
+namespace ASG.Domain.Common.Events;
 
 public record AnonymousRequestsSentEvent(List<AnonymousRequest> AnonymousRequests) :　IDomainEvent;

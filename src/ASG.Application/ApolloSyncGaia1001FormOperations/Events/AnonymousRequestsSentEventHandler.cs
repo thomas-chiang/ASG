@@ -1,5 +1,5 @@
 using ASG.Application.Common.Interfaces;
-using ASG.Domain.ApolloSyncGaia1001FormOperations.Events;
+using ASG.Domain.Common.Events;
 using MediatR;
 
 namespace ASG.Application.ApolloSyncGaia1001FormOperations.Events;

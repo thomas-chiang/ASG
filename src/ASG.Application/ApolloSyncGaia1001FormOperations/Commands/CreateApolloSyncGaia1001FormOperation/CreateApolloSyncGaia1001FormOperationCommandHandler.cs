@@ -13,7 +13,6 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
 {
     private readonly IApolloAttendanceRepository _apolloAttendanceRepository;
     private readonly IGaia1001FormRepository _gaia1001FormRepository;
-    private readonly IAnonymousRequestSender _anonymousRequestSender;
     private readonly IAsiaTubeDbSetter _asiaTubeDbSetter;
     private readonly IDomainEventAdapter _domainEventAdapter;
 
@@ -26,7 +25,6 @@ public class CreateApolloSyncGaia1001FormOperationCommandHandler :　IRequestHan
     {
         _apolloAttendanceRepository = apolloAttendanceRepository;
         _gaia1001FormRepository = gaia1001FormRepository;
-        _anonymousRequestSender = anonymousRequestSender;
         _asiaTubeDbSetter = asiaTubeDbSetter;
         _domainEventAdapter = domainEventAdapter;
     }
